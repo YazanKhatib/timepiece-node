@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "graph/*": ["src/graph/*"],
+      "graph": ["src/graph/index.ts"],
+      "models/*": ["src/models/*"],
+      "models": ["src/models/index.ts"],
+      "controllers/*": ["src/controllers/*"],
+      "controllers": ["src/controllers/index.ts"],
+      "services/*": ["src/services/*"],
+      "services": ["src/services/index.ts"],
+      "middlewares/*": ["src/middlewares/*"],
+      "middlewares": ["src/middlewares/index.ts"]
+    },
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
