@@ -1,9 +1,9 @@
 const DATABASE_URL = 'postgres://postgres:admin@localhost:5432/chrono';
 
-export default {
+module.exports = {
   development: {
     client: 'postgresql',
-    connection: DATABASE_URL,
+    connection: process.env.DATABASE_URL,
     migrations: {
       directory: './database/migrations',
     },
@@ -11,7 +11,7 @@ export default {
 
   production: {
     client: 'postgresql',
-    connection: DATABASE_URL,
+    connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
       max: 10,

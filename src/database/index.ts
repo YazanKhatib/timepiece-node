@@ -7,7 +7,7 @@ const DATABASE_URL = 'postgres://postgres:admin@localhost:5432/chrono';
 const connection = Knex({
   client: 'postgresql',
   useNullAsDefault: true,
-  connection: DATABASE_URL,
+  connection: process.env.DATABASE_URL,
   migrations: {
     directory: 'src/database/migrations',
   },
