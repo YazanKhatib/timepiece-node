@@ -19,7 +19,7 @@ export const startServer = async (app: Application) => {
 
   app.listen(process.env.PORT || 4000, () =>
     Logger.info(
-      `🚀 Server ready at http://localhost:4000${server.graphqlPath}`,
+      `🚀 Server ready at http://localhost:${process.env.PORT}/${server.graphqlPath}`,
     ),
   );
 };
