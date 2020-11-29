@@ -11,6 +11,7 @@ export const startServer = async (app: Application) => {
       resolvers: [AuthResolver, ProductResolver],
     }),
     context: ({ req, res }) => ({ req, res }),
+    playground: true,
   });
 
   initializeDB();
@@ -19,7 +20,7 @@ export const startServer = async (app: Application) => {
 
   app.listen(process.env.PORT || 4000, () =>
     Logger.info(
-      `🚀 Server ready at http://localhost:${process.env.PORT}/${server.graphqlPath}`,
+      `🚀 Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`,
     ),
   );
 };
