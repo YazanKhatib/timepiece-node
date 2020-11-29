@@ -7,16 +7,25 @@ export class Watch extends Model {
   readonly id!: number;
 
   @Field()
-  brand: string;
+  brand!: string;
 
   @Field()
   model: string;
 
   @Field()
-  min: number;
+  condition: string;
 
   @Field()
-  max: number;
+  delivery: string;
+
+  @Field()
+  location: string;
+
+  @Field()
+  featured: boolean;
+
+  @Field()
+  favorite: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 
