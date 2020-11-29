@@ -21,6 +21,9 @@ export class User extends Model {
   @Field()
   count: number;
 
+  @Field()
+  dealer: boolean;
+
   @Field({ nullable: true })
   address: string;
 

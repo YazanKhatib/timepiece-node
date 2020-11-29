@@ -64,6 +64,28 @@ export class AuthResolver {
     return otp;
   }
 
+  @Mutation(() => Number)
+  async registerDealer(
+    @Arg('email') email: string,
+    @Arg('username') username: string,
+    @Arg('password') password: string,
+    @Arg('address') address: string,
+    @Arg('phone') phone: string,
+  ) {
+    const hashedPassword = await hash(password, 10);
+    await User.query().insert({
+      email,
+      username,
+      password: hashedPassword,
+      address,
+      phone,
+      dealer: true,
+    });
+
+    const otp = this.sendEmail(email);
+    return otp;
+  }
+
   @Mutation(() => LoginResponse)
   async login(
     @Arg('email') email: string,
@@ -104,17 +126,17 @@ export class AuthResolver {
 
   @Mutation(() => Number)
   async sendEmail(@Arg('email') email: string) {
+    const { otp, token } = createConfirmationCode(1);
+    await User.query().findOne('email', email).patch({
+      token,
+    });
+
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
         user: 'yazankhatib97@gmail.com',
         pass: 'stukhuycuxbroiue',
       },
-    });
-
-    const { otp, token } = createConfirmationCode(1);
-    await User.query().findOne('email', email).patch({
-      token,
     });
 
     transporter.sendMail({
@@ -156,16 +178,18 @@ export class AuthResolver {
     return otp;
   }
 
-  @Mutation(() => User || Object)
+  @Mutation(() => LoginResponse)
   async confirmEmail(@Arg('email') email: string, @Arg('code') code: string) {
     const user = await User.query().findOne('email', email);
 
-    try {
-      verify(user.token, code);
-    } catch (e) {
+    const token = verify(user.token, code);
+    if (!token) {
       throw new Error('Invalid code');
     }
 
-    return user;
+    return {
+      user,
+      accessToken: createAccessToken(user),
+    };
   }
 }
