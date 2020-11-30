@@ -17,6 +17,8 @@ const app: Application = express();
 //     credentials: true,
 //   }),
 // );
+
+app.use(cors());
 app.use(cookieParser());
 
 app.post('/refresh_token', async (req, res) => {
