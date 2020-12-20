@@ -1,8 +1,9 @@
+import 'dotenv/config';
 import { Model } from 'objection';
 import { Logger } from '../services';
 import Knex from 'knex';
 
-const DATABASE_URL = 'postgres://postgres:admin@localhost:5432/chrono';
+// const DATABASE_URL = 'postgres://postgres:admin@localhost:5432/chrono';
 
 const connection = Knex({
   client: 'postgresql',

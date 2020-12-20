@@ -3,7 +3,7 @@ const DATABASE_URL = 'postgres://postgres:admin@localhost:5432/chrono';
 module.exports = {
   development: {
     client: 'postgresql',
-    connection: process.env.DATABASE_URL,
+    connection: DATABASE_URL,
     migrations: {
       directory: './database/migrations',
     },
