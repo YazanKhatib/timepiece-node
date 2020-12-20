@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+import { Watch } from 'models';
 import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
@@ -44,4 +45,19 @@ export class User extends Model {
   static get tableName() {
     return 'users';
   }
+
+  static relationMappings = () => ({
+    favorites: {
+      relation: Model.ManyToManyRelation,
+      modelClass: Watch,
+      join: {
+        from: 'users.id',
+        through: {
+          from: 'users_watches.user_id',
+          to: 'users_watches.watch_id',
+        },
+        to: 'watches.id',
+      },
+    },
+  });
 }

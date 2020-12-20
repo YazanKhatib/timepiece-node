@@ -6,26 +6,39 @@ export class Watch extends Model {
   @Field()
   readonly id!: number;
 
-  @Field()
-  brand!: string;
+  // Basic info
+  @Field() brand: string;
+  @Field() model: string;
+  @Field() description: string;
+  @Field() movement: string;
+  @Field() case_material: string;
+  @Field() bracelet_material: string;
+  @Field() production_year: number;
+  @Field() condition: string;
+  @Field() delivery: string;
+  @Field() gender: string;
+  @Field() location: string;
+  @Field() featured: boolean;
 
-  @Field()
-  model: string;
+  // Calibar
+  @Field({ nullable: true }) calibar: string;
+  @Field({ nullable: true }) base_calibar: string;
+  @Field({ nullable: true }) power_reserve: number;
+  @Field({ nullable: true }) jewels: number;
 
-  @Field()
-  condition: string;
+  // Case
+  @Field({ nullable: true }) case_diameter: number;
+  @Field({ nullable: true }) water_resistance: number;
+  @Field({ nullable: true }) bezel_material: string;
+  @Field({ nullable: true }) crystal: string;
+  @Field({ nullable: true }) dial: string;
+  @Field({ nullable: true }) dial_numbers: string;
 
-  @Field()
-  delivery: string;
+  // Bracelet/strap
+  @Field({ nullable: true }) bracelet_color: string;
+  @Field({ nullable: true }) clasp: string;
+  @Field({ nullable: true }) clasp_material: string;
 
-  @Field()
-  location: string;
-
-  @Field()
-  featured: boolean;
-
-  @Field()
-  favorite: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 

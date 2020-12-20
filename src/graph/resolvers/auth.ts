@@ -27,6 +27,9 @@ class LoginResponse {
 
   @Field()
   accessToken: string;
+
+  @Field()
+  refreshToken: string;
 }
 
 @Resolver()
@@ -102,11 +105,10 @@ export class AuthResolver {
       throw new Error('Bad password!');
     }
 
-    res.cookie('refresh-token', createRefreshToken(user));
-
     return {
       user,
       accessToken: createAccessToken(user),
+      refreshToken: createRefreshToken(user),
     };
   }
 
@@ -190,6 +192,7 @@ export class AuthResolver {
     return {
       user,
       accessToken: createAccessToken(user),
+      refreshToken: createRefreshToken(user),
     };
   }
 }
