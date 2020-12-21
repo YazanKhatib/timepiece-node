@@ -3,12 +3,16 @@ import { Application } from 'express';
 import { Logger } from 'services';
 import { buildSchema } from 'type-graphql';
 import { initializeDB } from '../database';
-import { AuthResolver, ProductResolver } from './resolvers/index';
+import {
+  AuthResolver,
+  ProductResolver,
+  DashboardResolver,
+} from './resolvers/index';
 
 export const startServer = async (app: Application) => {
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [AuthResolver, ProductResolver],
+      resolvers: [AuthResolver, ProductResolver, DashboardResolver],
     }),
     context: ({ req, res }) => ({ req, res }),
     introspection: true,

@@ -25,6 +25,9 @@ export class User extends Model {
   @Field()
   dealer: boolean;
 
+  @Field({ defaultValue: false })
+  isAdmin: boolean;
+
   @Field({ nullable: true })
   address: string;
 

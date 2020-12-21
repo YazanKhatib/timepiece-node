@@ -4,8 +4,8 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema
     .createTable('users', (table) => {
       table.increments('id').primary();
+      table.string('token');
       table.string('phone', 255);
-      table.string('token', 255);
       table.string('address', 255);
       table.string('last_name', 255);
       table.string('first_name', 255);
@@ -13,6 +13,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('email', 255).unique().notNullable();
       table.integer('count').defaultTo(0);
       table.boolean('dealer').defaultTo(false);
+      table.boolean('isAdmin').defaultTo(false);
       table.boolean('confirmed').defaultTo(false);
       table.string('username', 255).unique().notNullable();
       table.timestamp('created_at').defaultTo(knex.fn.now());

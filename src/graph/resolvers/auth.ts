@@ -38,17 +38,6 @@ export class AuthResolver {
   status() {
     return 'Server is Healthy!';
   }
-  @Query(() => String)
-  @UseMiddleware(isAuth)
-  Check(@Ctx() { payload }: Context) {
-    console.log(payload);
-    return `your user id is ${payload!.userId} !`;
-  }
-
-  @Query(() => [User])
-  async users() {
-    return await User.query();
-  }
 
   @Mutation(() => Number)
   async register(
@@ -93,7 +82,6 @@ export class AuthResolver {
   async login(
     @Arg('email') email: string,
     @Arg('password') password: string,
-    @Ctx() { res }: Context,
   ): Promise<LoginResponse> {
     const user = await User.query().findOne('email', email);
     if (!user) {
@@ -112,18 +100,47 @@ export class AuthResolver {
     };
   }
 
+  @Mutation(() => User)
+  @UseMiddleware(isAuth)
+  async updateProfile(
+    @Arg('phone') phone: string,
+    @Arg('address') address: string,
+    @Arg('isAdmin') isAdmin: boolean,
+    @Arg('last_name') last_name: string,
+    @Arg('confirmed') confirmed: boolean,
+    @Arg('first_name') first_name: string,
+    @Ctx() { payload }: Context,
+  ) {
+    const user = await User.query().findById(payload!.userId).patch({
+      phone,
+      address,
+      last_name,
+      first_name,
+      confirmed,
+      isAdmin,
+    });
+
+    return user;
+  }
+
   @Mutation(() => Boolean)
-  async resetPassword(@Arg('email') email: string) {
+  async resetPassword(
+    @Arg('password') password: string,
+    @Ctx() { payload }: Context,
+  ) {
     const user = await User.query()
-      .findOne('email', email)
+      .findOne('id', payload!.userId)
       .increment('count', 1);
     if (!user) {
       throw new Error('Could not find user!');
     }
 
-    return true;
+    const hashedPassword = await hash(password, 10);
 
-    // Rest of reset password logic
+    await User.query().findOne('id', payload!.userId).patch({
+      password: hashedPassword,
+    });
+    return true;
   }
 
   @Mutation(() => Number)

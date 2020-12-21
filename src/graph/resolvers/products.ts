@@ -131,7 +131,7 @@ export class ProductResolver {
     return product;
   }
 
-  @Mutation(() => Watch)
+  @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async toggleFavorite(@Ctx() { payload }: Context, @Arg('id') id: string) {
     const user = await User.query().findById(payload!.userId);
@@ -140,8 +140,25 @@ export class ProductResolver {
     }
 
     const watch = await Watch.query().findOne('id', id);
+    if (!watch) {
+      throw new Error('Could not find watch!');
+    }
 
-    //@ts-ignore
-    await user.$relatedQuery('favorites').relate({ id: watch.id });
+    const exist = await user
+      .$relatedQuery('favorites')
+      .where('watches.id', watch.id);
+
+    if (!exist.length) {
+      //@ts-ignore
+      await user.$relatedQuery('favorites').relate({ id: watch.id });
+      return true;
+    } else {
+      //@ts-ignore
+      await user
+        .$relatedQuery('favorites')
+        .unrelate()
+        .where('watches.id', watch.id);
+      return false;
+    }
   }
 }
