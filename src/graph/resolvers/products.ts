@@ -32,13 +32,6 @@ export class ProductResolver {
 
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
-  async getFeatured() {
-    const products = await Watch.query().where('featured', true);
-    return products;
-  }
-
-  @Query(() => [Watch])
-  @UseMiddleware(isAuth)
   async getFavorites(@Ctx() { payload }: Context) {
     const user = await User.query().findById(payload!.userId);
     if (!user) {

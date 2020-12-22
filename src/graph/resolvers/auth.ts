@@ -44,34 +44,20 @@ export class AuthResolver {
     @Arg('email') email: string,
     @Arg('username') username: string,
     @Arg('password') password: string,
+    @Arg('phone', { nullable: true }) phone: string,
+    @Arg('address', { nullable: true }) address: string,
+    @Arg('dealer', { defaultValue: false }) dealer: boolean,
+    @Arg('isAdmin', { defaultValue: false }) isAdmin: boolean,
   ) {
     const hashedPassword = await hash(password, 10);
     await User.query().insert({
       email,
       username,
       password: hashedPassword,
-    });
-
-    const otp = this.sendEmail(email);
-    return otp;
-  }
-
-  @Mutation(() => Number)
-  async registerDealer(
-    @Arg('email') email: string,
-    @Arg('username') username: string,
-    @Arg('password') password: string,
-    @Arg('address') address: string,
-    @Arg('phone') phone: string,
-  ) {
-    const hashedPassword = await hash(password, 10);
-    await User.query().insert({
-      email,
-      username,
-      password: hashedPassword,
-      address,
       phone,
-      dealer: true,
+      dealer,
+      address,
+      isAdmin,
     });
 
     const otp = this.sendEmail(email);
@@ -81,9 +67,15 @@ export class AuthResolver {
   @Mutation(() => LoginResponse)
   async login(
     @Arg('email') email: string,
+    @Arg('username', { nullable: true, defaultValue: undefined })
+    username: string,
     @Arg('password') password: string,
   ): Promise<LoginResponse> {
-    const user = await User.query().findOne('email', email);
+    let user;
+    if (username === undefined) {
+      user = await User.query().findOne('email', email);
+    } else user = await User.query().findOne('username', username);
+
     if (!user) {
       throw new Error('Could not find user!');
     }
