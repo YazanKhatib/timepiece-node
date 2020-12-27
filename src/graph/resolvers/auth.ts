@@ -50,12 +50,14 @@ export class AuthResolver {
     @Arg('isAdmin', { defaultValue: false }) isAdmin: boolean,
   ) {
     const hashedPassword = await hash(password, 10);
+    const blocked = dealer ? true : false;
     await User.query().insert({
       email,
       username,
       password: hashedPassword,
       phone,
       dealer,
+      blocked,
       address,
       isAdmin,
     });
@@ -73,6 +75,10 @@ export class AuthResolver {
 
     if (!user) {
       throw new Error('Could not find user!');
+    }
+
+    if (!user.confirmed) {
+      throw new Error('User account is not confirmed!');
     }
 
     const valid = await compare(password, user.password);
@@ -94,7 +100,7 @@ export class AuthResolver {
     @Arg('address') address: string,
     @Arg('isAdmin') isAdmin: boolean,
     @Arg('last_name') last_name: string,
-    @Arg('confirmed') confirmed: boolean,
+    @Arg('blocked') blocked: boolean,
     @Arg('first_name') first_name: string,
     @Ctx() { payload }: Context,
   ) {
@@ -103,7 +109,7 @@ export class AuthResolver {
       address,
       last_name,
       first_name,
-      confirmed,
+      blocked,
       isAdmin,
     });
 
@@ -191,6 +197,10 @@ export class AuthResolver {
     const token = verify(user.token, code);
     if (!token) {
       throw new Error('Invalid code');
+    } else {
+      await User.query().findOne('email', email).patch({
+        confirmed: true,
+      });
     }
 
     return {

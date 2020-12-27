@@ -42,6 +42,9 @@ export class User extends Model {
 
   @Field()
   confirmed: boolean;
+
+  @Field()
+  blocked: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 

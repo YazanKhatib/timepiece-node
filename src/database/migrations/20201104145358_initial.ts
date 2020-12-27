@@ -13,6 +13,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('email', 255).unique().notNullable();
       table.integer('count').defaultTo(0);
       table.boolean('dealer').defaultTo(false);
+      table.boolean('blocked').defaultTo(false);
       table.boolean('confirmed').defaultTo(false);
       table.boolean('isAdmin').defaultTo(false);
       table.string('username', 255).unique().notNullable();
