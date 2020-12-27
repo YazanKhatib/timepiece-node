@@ -66,18 +66,10 @@ export class AuthResolver {
 
   @Mutation(() => LoginResponse)
   async login(
-    @Arg('email', { defaultValue: null }) email: string,
-    @Arg('username', { defaultValue: null }) username: string,
+    @Arg('username', { nullable: true, defaultValue: null }) username: string,
     @Arg('password') password: string,
   ): Promise<LoginResponse> {
-    let user;
-    if (email === null && username === null) {
-      throw new Error('Username or email must be provided!');
-    }
-
-    if (username === null) {
-      user = await User.query().findOne('email', email);
-    } else user = await User.query().findOne('username', username);
+    const user = await User.query().findOne('username', username);
 
     if (!user) {
       throw new Error('Could not find user!');
