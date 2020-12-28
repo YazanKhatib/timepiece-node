@@ -1,15 +1,7 @@
 import { isAuth } from 'middlewares';
 import { User, Watch } from 'models';
-import { Context } from '../types';
 
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  UseMiddleware,
-  Ctx,
-} from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, UseMiddleware } from 'type-graphql';
 import { compare } from 'bcrypt';
 
 @Resolver()
@@ -33,7 +25,7 @@ export class DashboardResolver {
     @Arg('password') password: string,
   ) {
     const admin = await User.query().findOne('username', username);
-    if (!admin) {
+    if (!admin || !admin.isAdmin) {
       throw new Error('Could not find admin!');
     }
 

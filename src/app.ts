@@ -41,8 +41,8 @@ app.post('/refresh_token', async (req, res) => {
   }
 
   const accessToken = createAccessToken(user);
-  res.cookie('refresh-token', createRefreshToken(user));
-  return res.send({ accessToken });
+  const refreshToken = createRefreshToken(user);
+  return res.send({ accessToken, refreshToken });
 });
 
 startServer(app);
