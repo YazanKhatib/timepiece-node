@@ -15,8 +15,10 @@ import {
 export class ProductResolver {
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
-  async getProducts() {
-    const products = await Watch.query();
+  async getProducts(@Arg('featured') featured: boolean) {
+    const products = featured
+      ? await Watch.query().where('featured', true)
+      : await Watch.query();
     return products;
   }
 

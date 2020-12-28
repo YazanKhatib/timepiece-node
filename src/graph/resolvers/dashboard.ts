@@ -1,21 +1,17 @@
 import { isAuth } from 'middlewares';
-import { User, Watch } from 'models';
+import { User } from 'models';
 
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from 'type-graphql';
 import { compare } from 'bcrypt';
 
 @Resolver()
 export class DashboardResolver {
-  @Query(() => [Watch])
-  @UseMiddleware(isAuth)
-  async getProducts() {
-    const products = await Watch.query();
-    return products;
-  }
-
   @Query(() => [User])
-  async users() {
-    return await User.query();
+  async users(@Arg('dealer') dealer: boolean) {
+    const users = dealer
+      ? await User.query().where('dealer', true)
+      : await User.query();
+    return users;
   }
 
   @Mutation(() => User)
