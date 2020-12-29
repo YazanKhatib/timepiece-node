@@ -125,6 +125,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async resetPassword(
     @Arg('password') password: string,
     @Ctx() { payload }: Context,
