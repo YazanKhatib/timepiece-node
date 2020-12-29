@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import 'dotenv/config';
 import express, { Application } from 'express';
 import { verify } from 'jsonwebtoken';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 import { User } from 'models';
 import { startServer } from 'graph';
@@ -18,6 +19,7 @@ const app: Application = express();
 // );
 
 app.use(cors());
+app.use(graphqlUploadExpress({ maxFileSize: 10000, maxFiles: 10 }));
 
 app.post('/refresh_token', async (req, res) => {
   const { refresh_token: token } = req.headers;

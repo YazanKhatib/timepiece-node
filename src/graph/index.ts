@@ -15,6 +15,7 @@ export const startServer = async (app: Application) => {
       resolvers: [AuthResolver, ProductResolver, DashboardResolver],
     }),
     context: ({ req, res }) => ({ req, res }),
+    uploads: false,
     introspection: true,
     playground: true,
   });

@@ -1,6 +1,8 @@
 import { isAuth } from 'middlewares';
 import { User, Watch } from 'models';
 import { Context } from '../types';
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { createWriteStream } from 'fs';
 
 import {
   Resolver,
@@ -285,5 +287,17 @@ export class ProductResolver {
         .where('watches.id', watch.id);
       return false;
     }
+  }
+
+  @Mutation(() => Boolean)
+  async addPicture(
+    @Arg('picture', () => GraphQLUpload)
+    { createReadStream, filename }: FileUpload,
+  ) {
+    createReadStream().pipe(
+      createWriteStream(__dirname + `/../../../uploads/${filename}`),
+    );
+
+    return true;
   }
 }
