@@ -96,22 +96,30 @@ export class AuthResolver {
   @Mutation(() => User)
   @UseMiddleware(isAuth)
   async updateProfile(
-    @Arg('phone') phone: string,
-    @Arg('address') address: string,
-    @Arg('isAdmin') isAdmin: boolean,
-    @Arg('last_name') last_name: string,
-    @Arg('blocked') blocked: boolean,
-    @Arg('first_name') first_name: string,
+    @Arg('phone', { defaultValue: undefined, nullable: true }) phone: string,
+    @Arg('address', { defaultValue: undefined, nullable: true })
+    address: string,
+    @Arg('isAdmin', { defaultValue: undefined, nullable: true })
+    isAdmin: boolean,
+    @Arg('blocked', { defaultValue: undefined, nullable: true })
+    blocked: boolean,
+    @Arg('last_name', { defaultValue: undefined, nullable: true })
+    last_name: string,
+    @Arg('first_name', { defaultValue: undefined, nullable: true })
+    first_name: string,
     @Ctx() { payload }: Context,
   ) {
-    const user = await User.query().findById(payload!.userId).patch({
-      phone,
-      address,
-      last_name,
-      first_name,
-      blocked,
-      isAdmin,
-    });
+    const user = await User.query()
+      .findById(payload!.userId)
+      .patch({
+        phone,
+        address,
+        last_name,
+        first_name,
+        blocked,
+        isAdmin,
+      })
+      .returning('*');
 
     return user;
   }
