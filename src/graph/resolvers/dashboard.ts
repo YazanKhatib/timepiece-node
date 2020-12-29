@@ -15,7 +15,6 @@ export class DashboardResolver {
   }
 
   @Mutation(() => User)
-  @UseMiddleware(isAuth)
   async loginAdmin(
     @Arg('username') username: string,
     @Arg('password') password: string,
