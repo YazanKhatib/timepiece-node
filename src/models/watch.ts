@@ -10,15 +10,15 @@ export class Watch extends Model {
   @Field() brand: string;
   @Field() model: string;
   @Field() description: string;
-  @Field() movement: string;
-  @Field() case_material: string;
-  @Field() bracelet_material: string;
-  @Field() production_year: number;
   @Field() condition: string;
-  @Field() delivery: string;
-  @Field() gender: string;
   @Field() location: string;
   @Field() featured: boolean;
+  @Field() delivery: string;
+  @Field() production_year: number;
+  @Field({ nullable: true }) case_material: string;
+  @Field({ nullable: true }) movement: string;
+  @Field({ nullable: true }) bracelet_material: string;
+  @Field({ nullable: true }) gender: string;
 
   // Calibar
   @Field({ nullable: true }) calibar: string;

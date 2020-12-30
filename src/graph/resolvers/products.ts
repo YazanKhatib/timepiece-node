@@ -159,33 +159,36 @@ export class ProductResolver {
     @Arg('clasp', { nullable: true }) clasp: string,
     @Arg('clasp_material', { nullable: true }) clasp_material: string,
   ) {
-    const product = await Watch.query().findById(id).patch({
-      brand,
-      model,
-      description,
-      movement,
-      case_material,
-      bracelet_material,
-      production_year,
-      condition,
-      delivery,
-      gender,
-      location,
-      featured,
-      calibar,
-      base_calibar,
-      power_reserve,
-      jewels,
-      case_diameter,
-      water_resistance,
-      bezel_material,
-      crystal,
-      dial,
-      dial_numbers,
-      bracelet_color,
-      clasp,
-      clasp_material,
-    });
+    const product = await Watch.query()
+      .findById(id)
+      .patch({
+        brand,
+        model,
+        description,
+        movement,
+        case_material,
+        bracelet_material,
+        production_year,
+        condition,
+        delivery,
+        gender,
+        location,
+        featured,
+        calibar,
+        base_calibar,
+        power_reserve,
+        jewels,
+        case_diameter,
+        water_resistance,
+        bezel_material,
+        crystal,
+        dial,
+        dial_numbers,
+        bracelet_color,
+        clasp,
+        clasp_material,
+      })
+      .returning('*');
 
     return product;
   }
@@ -250,12 +253,15 @@ export class ProductResolver {
     return watches;
   }
 
-  @Mutation(() => Watch)
+  @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteProduct(@Arg('id') id: string) {
-    const product = await Watch.query().deleteById(id);
-
-    return product;
+    try {
+      await Watch.query().deleteById(id);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @Mutation(() => Boolean)
