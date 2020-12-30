@@ -7,10 +7,10 @@ import { compare } from 'bcrypt';
 @Resolver()
 export class DashboardResolver {
   @Query(() => [User])
-  async users(@Arg('dealer') dealer: boolean) {
+  async getUsers(@Arg('dealer') dealer: boolean) {
     const users = dealer
       ? await User.query().where('dealer', true)
-      : await User.query();
+      : await User.query().where('dealer', false);
     return users;
   }
 
