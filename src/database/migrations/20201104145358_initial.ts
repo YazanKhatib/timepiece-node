@@ -4,6 +4,8 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema
     .createTable('users', (table) => {
       table.increments('id').primary();
+      table.date('birth');
+      table.string('gender');
       table.string('phone', 255);
       table.string('token', 255);
       table.string('address', 255);
@@ -70,6 +72,15 @@ export async function up(knex: Knex): Promise<void> {
       table.string('name').notNullable().unique();
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').defaultTo(knex.fn.now());
+    })
+
+    .createTable('images', (table) => {
+      table.increments('id').primary();
+      table.string('url').notNullable();
+      table.boolean('main').defaultTo(false);
+      table.integer('watch_id');
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+      table.timestamp('updated_at').defaultTo(knex.fn.now());
     });
 }
 
@@ -77,5 +88,7 @@ export async function down(knex: Knex): Promise<void> {
   return knex.schema
     .dropTable('users')
     .dropTable('watches')
-    .dropTable('users_watches');
+    .dropTable('users_watches')
+    .dropTable('brands')
+    .dropTableIfExists('images');
 }

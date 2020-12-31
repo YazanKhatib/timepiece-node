@@ -7,44 +7,21 @@ export class User extends Model {
   @Field()
   readonly id!: number;
 
-  @Field()
-  username!: string;
-
-  @Field()
-  password: string;
-
-  @Field({ nullable: true })
-  phone?: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  count: number;
-
-  @Field()
-  dealer: boolean;
-
-  @Field({ defaultValue: false })
-  isAdmin: boolean;
-
-  @Field({ nullable: true })
-  address: string;
-
-  @Field({ nullable: true })
-  first_name: string;
-
-  @Field({ nullable: true })
-  last_name: string;
-
-  @Field({ nullable: true })
-  token: string;
-
-  @Field()
-  confirmed: boolean;
-
-  @Field()
-  blocked: boolean;
+  @Field() username!: string;
+  @Field() password: string;
+  @Field() email: string;
+  @Field() count: number;
+  @Field() dealer: boolean;
+  @Field() blocked: boolean;
+  @Field() confirmed: boolean;
+  @Field({ nullable: true }) phone?: string;
+  @Field({ nullable: true }) birth: Date;
+  @Field({ nullable: true }) gender: string;
+  @Field({ defaultValue: false }) isAdmin: boolean;
+  @Field({ nullable: true }) address: string;
+  @Field({ nullable: true }) first_name: string;
+  @Field({ nullable: true }) last_name: string;
+  @Field({ nullable: true }) token: string;
   createdAt?: Date;
   updatedAt?: Date;
 

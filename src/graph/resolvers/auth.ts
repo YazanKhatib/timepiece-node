@@ -104,6 +104,8 @@ export class AuthResolver {
   @UseMiddleware(isAuth)
   async updateProfile(
     @Arg('phone', { defaultValue: undefined, nullable: true }) phone: string,
+    @Arg('birth', { defaultValue: undefined, nullable: true }) birth: Date,
+    @Arg('gender', { defaultValue: undefined, nullable: true }) gender: string,
     @Arg('address', { defaultValue: undefined, nullable: true })
     address: string,
     @Arg('isAdmin', { defaultValue: undefined, nullable: true })
@@ -120,6 +122,8 @@ export class AuthResolver {
       .findById(payload!.userId)
       .patch({
         phone,
+        birth,
+        gender,
         address,
         last_name,
         first_name,
