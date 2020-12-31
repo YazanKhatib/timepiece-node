@@ -39,6 +39,13 @@ export class AuthResolver {
     return 'Server is Healthy!';
   }
 
+  @Query(() => User)
+  @UseMiddleware(isAuth)
+  async me(@Ctx() { payload }: Context) {
+    const user = User.query().findById(payload!.userId);
+    return user;
+  }
+
   @Mutation(() => Number)
   async register(
     @Arg('email') email: string,
