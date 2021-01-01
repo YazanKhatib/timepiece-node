@@ -40,18 +40,6 @@ export class ProductResolver {
 
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
-  async getFavorites(@Ctx() { payload }: Context) {
-    const user = await User.query().findById(payload!.userId);
-    if (!user) {
-      throw new Error('Could not find user!');
-    }
-
-    const favorites = await user.$relatedQuery('favorites');
-    return favorites;
-  }
-
-  @Query(() => [Watch])
-  @UseMiddleware(isAuth)
   async searchProducts(@Arg('brand') brand: string) {
     const products = await Watch.query();
     const result = products.filter((p) => {
@@ -153,6 +141,7 @@ export class ProductResolver {
     @Arg('gender', { nullable: true }) gender: string,
     @Arg('location', { nullable: true }) location: string,
     @Arg('featured', { nullable: true }) featured: boolean,
+    @Arg('confirmed', { nullable: true }) confirmed: boolean,
 
     // Calibar Optional
     @Arg('calibar', { nullable: true }) calibar: string,
@@ -189,6 +178,7 @@ export class ProductResolver {
         gender,
         location,
         featured,
+        confirmed,
         calibar,
         base_calibar,
         power_reserve,
@@ -275,37 +265,6 @@ export class ProductResolver {
       await Watch.query().deleteById(id);
       return true;
     } catch (e) {
-      return false;
-    }
-  }
-
-  @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
-  async toggleFavorite(@Ctx() { payload }: Context, @Arg('id') id: string) {
-    const user = await User.query().findById(payload!.userId);
-    if (!user) {
-      throw new Error('Could not find user!');
-    }
-
-    const watch = await Watch.query().findOne('id', id);
-    if (!watch) {
-      throw new Error('Could not find watch!');
-    }
-
-    const exist = await user
-      .$relatedQuery('favorites')
-      .where('watches.id', watch.id);
-
-    if (!exist.length) {
-      //@ts-ignore
-      await user.$relatedQuery('favorites').relate({ id: watch.id });
-      return true;
-    } else {
-      //@ts-ignore
-      await user
-        .$relatedQuery('favorites')
-        .unrelate()
-        .where('watches.id', watch.id);
       return false;
     }
   }

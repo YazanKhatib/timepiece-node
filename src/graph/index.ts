@@ -8,6 +8,7 @@ import {
   BrandResolver,
   ProductResolver,
   DashboardResolver,
+  FavoriteResolver,
 } from './resolvers/index';
 
 export const startServer = async (app: Application) => {
@@ -17,6 +18,7 @@ export const startServer = async (app: Application) => {
         AuthResolver,
         BrandResolver,
         ProductResolver,
+        FavoriteResolver,
         DashboardResolver,
       ],
     }),

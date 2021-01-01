@@ -38,6 +38,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('location');
       table.integer('price');
       table.boolean('featured').defaultTo(false);
+      table.boolean('confirmed').defaultTo(false);
 
       // Calibar
       table.string('calibar');
