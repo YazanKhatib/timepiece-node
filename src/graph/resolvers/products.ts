@@ -1,16 +1,16 @@
 import { isAuth } from 'middlewares';
-import { User, Watch } from 'models';
+import { User, Watch, Image } from 'models';
 import { Context } from '../types';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
 
 import {
-  Resolver,
+  Ctx,
+  Arg,
   Query,
   Mutation,
-  Arg,
+  Resolver,
   UseMiddleware,
-  Ctx,
 } from 'type-graphql';
 
 @Resolver()
@@ -27,7 +27,11 @@ export class ProductResolver {
   @Query(() => Watch)
   @UseMiddleware(isAuth)
   async getProduct(@Arg('id') id: number) {
-    const product = await Watch.query().findById(id);
+    const product = await Watch.query()
+      .findOne('id', id)
+      .withGraphFetched('images');
+
+    console.log(product);
     if (!product) {
       throw new Error('Product not found');
     }
@@ -57,11 +61,19 @@ export class ProductResolver {
     return result;
   }
 
+  @Query(() => [User])
+  @UseMiddleware(isAuth)
+  async getOffers() {
+    const offers = await User.query().withGraphFetched('offers');
+    return offers;
+  }
+
   @Mutation(() => Watch)
   @UseMiddleware(isAuth)
   async addProduct(
     @Arg('brand') brand: string,
     @Arg('model') model: string,
+    @Arg('price') price: number,
     @Arg('delivery') delivery: string,
     @Arg('condition') condition: string,
     @Arg('description') description: string,
@@ -95,6 +107,7 @@ export class ProductResolver {
     const product = await Watch.query().insert({
       brand,
       model,
+      price,
       description,
       movement,
       case_material,
@@ -129,6 +142,7 @@ export class ProductResolver {
     @Arg('id') id: string,
     @Arg('brand', { nullable: true }) brand: string,
     @Arg('model', { nullable: true }) model: string,
+    @Arg('price', { nullable: true }) price: number,
     @Arg('description', { nullable: true }) description: string,
     @Arg('movement', { nullable: true }) movement: string,
     @Arg('case_material', { nullable: true }) case_material: string,
@@ -164,6 +178,7 @@ export class ProductResolver {
       .patch({
         brand,
         model,
+        price,
         description,
         movement,
         case_material,
@@ -297,12 +312,43 @@ export class ProductResolver {
 
   @Mutation(() => Boolean)
   async addPicture(
+    // @Arg('id') id: string,
     @Arg('picture', () => GraphQLUpload)
     { createReadStream, filename }: FileUpload,
   ) {
-    createReadStream().pipe(
-      createWriteStream(__dirname + `/../../../uploads/${filename}`),
-    );
+    const loc = __dirname + `/../../../uploads/${filename}`;
+    createReadStream().pipe(createWriteStream(loc));
+
+    const watch = await Watch.query().findById(1);
+    const images = await watch.$relatedQuery('images');
+    console.log({ images });
+
+    const image = await Image.query().insert({
+      url: loc,
+      main: images.length ? true : false,
+    });
+
+    console.log({ image });
+    await watch.$relatedQuery('images').relate(image);
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async offerPrice(
+    @Arg('id') id: string,
+    @Arg('proposed_price') price: number,
+    @Ctx() { payload }: Context,
+  ) {
+    const user = await User.query().findById(payload!.userId);
+
+    const watch = await Watch.query().findById(id);
+
+    await user
+      .$relatedQuery('offers')
+      //@ts-ignore
+      .relate({ id: watch.id, proposed_price: JSON.stringify(price) });
 
     return true;
   }

@@ -22,6 +22,8 @@ export class User extends Model {
   @Field({ nullable: true }) first_name: string;
   @Field({ nullable: true }) last_name: string;
   @Field({ nullable: true }) token: string;
+  @Field((type) => [Watch]) offers: Watch[];
+
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -38,6 +40,19 @@ export class User extends Model {
         through: {
           from: 'users_watches.user_id',
           to: 'users_watches.watch_id',
+        },
+        to: 'watches.id',
+      },
+    },
+    offers: {
+      relation: Model.ManyToManyRelation,
+      modelClass: Watch,
+      join: {
+        from: 'users.id',
+        through: {
+          from: 'offers.user_id',
+          to: 'offers.watch_id',
+          extra: ['proposed_price'],
         },
         to: 'watches.id',
       },

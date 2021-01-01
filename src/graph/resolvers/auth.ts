@@ -7,13 +7,13 @@ import {
   createRefreshToken,
 } from 'services';
 import {
-  Resolver,
+  Ctx,
+  Arg,
+  Field,
   Query,
   Mutation,
+  Resolver,
   ObjectType,
-  Field,
-  Arg,
-  Ctx,
   UseMiddleware,
 } from 'type-graphql';
 import { Context } from '../types';

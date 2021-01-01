@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+import { Image } from 'models';
 import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
@@ -14,6 +15,8 @@ export class Watch extends Model {
   @Field() location: string;
   @Field() featured: boolean;
   @Field() delivery: string;
+  @Field() price: number;
+  @Field() proposed_price: number;
   @Field() production_year: number;
   @Field({ nullable: true }) case_material: string;
   @Field({ nullable: true }) movement: string;
@@ -45,4 +48,15 @@ export class Watch extends Model {
   static get tableName() {
     return 'watches';
   }
+
+  static relationMappings = () => ({
+    images: {
+      relation: Model.HasManyRelation,
+      modelClass: Image,
+      join: {
+        from: 'watches.id',
+        to: 'images.watch_id',
+      },
+    },
+  });
 }
