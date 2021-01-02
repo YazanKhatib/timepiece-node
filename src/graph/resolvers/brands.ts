@@ -1,14 +1,17 @@
 import { isAuth } from 'middlewares';
 import { Brand } from 'models';
-
+import { BrandResponse } from '../types';
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from 'type-graphql';
 
 @Resolver()
 export class BrandResolver {
-  @Query(() => [Brand])
+  @Query(() => BrandResponse)
   @UseMiddleware(isAuth)
-  async getBrands() {
-    const brands = await Brand.query();
+  async getBrands(
+    @Arg('offset', { defaultValue: 0 }) offset: number,
+    @Arg('limit', { defaultValue: 10 }) limit: number,
+  ) {
+    const brands = await Brand.query().page(offset, limit);
     return brands;
   }
 

@@ -1,6 +1,6 @@
 import { isAuth } from 'middlewares';
 import { User, Watch, Image } from 'models';
-import { Context } from '../types';
+import { Context, WatchResponse } from '../types';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
 
@@ -15,12 +15,16 @@ import {
 
 @Resolver()
 export class ProductResolver {
-  @Query(() => [Watch])
+  @Query(() => WatchResponse)
   @UseMiddleware(isAuth)
-  async getProducts(@Arg('featured') featured: boolean) {
+  async getProducts(
+    @Arg('featured') featured: boolean,
+    @Arg('offset', { defaultValue: 0 }) offset: number,
+    @Arg('limit', { defaultValue: 10 }) limit: number,
+  ) {
     const products = featured
-      ? await Watch.query().where('featured', true)
-      : await Watch.query();
+      ? await Watch.query().where('featured', true).page(offset, limit)
+      : await Watch.query().page(offset, limit);
     return products;
   }
 
