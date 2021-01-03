@@ -19,6 +19,7 @@ import {
 import { Context } from '../types';
 import nodemailer from 'nodemailer';
 import { verify } from 'jsonwebtoken';
+import { UniqueViolationError } from 'objection';
 
 @ObjectType()
 class LoginResponse {
@@ -58,16 +59,21 @@ export class AuthResolver {
   ) {
     const hashedPassword = await hash(password, 10);
     const blocked = dealer ? true : false;
-    await User.query().insert({
-      email,
-      username,
-      password: hashedPassword,
-      phone,
-      dealer,
-      blocked,
-      address,
-      isAdmin,
-    });
+    try {
+      await User.query().insert({
+        email,
+        username,
+        password: hashedPassword,
+        phone,
+        dealer,
+        blocked,
+        address,
+        isAdmin,
+      });
+    } catch (e) {
+      if (e instanceof UniqueViolationError)
+        throw new Error('User already exist!');
+    }
 
     const otp = this.sendEmail(email);
     return otp;
