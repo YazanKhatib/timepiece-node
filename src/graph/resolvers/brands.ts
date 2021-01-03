@@ -2,6 +2,7 @@ import { isAuth } from 'middlewares';
 import { Brand } from 'models';
 import { BrandResponse } from '../types';
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from 'type-graphql';
+import { UniqueViolationError } from 'objection';
 
 @Resolver()
 export class BrandResolver {
@@ -18,23 +19,32 @@ export class BrandResolver {
   @Mutation(() => Brand)
   @UseMiddleware(isAuth)
   async createBrand(@Arg('name') name: string) {
-    const brand = await Brand.query().insert({
-      name,
-    });
-    return brand;
+    try {
+      const brand = await Brand.query().insert({
+        name: name.toLowerCase(),
+      });
+      return brand;
+    } catch (e) {
+      if (e instanceof UniqueViolationError)
+        throw new Error('Brand already exist!');
+    }
   }
 
   @Mutation(() => Brand)
   @UseMiddleware(isAuth)
   async updateBrand(@Arg('id') id: string, @Arg('name') name: string) {
-    const brand = await Brand.query()
-      .findById(id)
-      .patch({
-        name,
-      })
-      .returning('*');
-
-    return brand;
+    try {
+      const brand = await Brand.query()
+        .findById(id)
+        .patch({
+          name: name.toLowerCase(),
+        })
+        .returning('*');
+      return brand;
+    } catch (e) {
+      if (e instanceof UniqueViolationError)
+        throw new Error('Brand already exist!');
+    }
   }
 
   @Mutation(() => Boolean)
