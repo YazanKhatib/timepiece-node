@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+import { Watch } from 'models';
 import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
@@ -11,4 +12,15 @@ export class Brand extends Model {
   static get tableName() {
     return 'brands';
   }
+
+  static relationMappings = () => ({
+    products: {
+      relation: Model.HasManyRelation,
+      modelClass: Watch,
+      join: {
+        from: 'brands.id',
+        to: 'watches.brand_id',
+      },
+    },
+  });
 }

@@ -1,5 +1,5 @@
 import { isAuth } from 'middlewares';
-import { Brand } from 'models';
+import { Brand, Watch } from 'models';
 import { BrandResponse } from '../types';
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from 'type-graphql';
 import { UniqueViolationError } from 'objection';
@@ -14,6 +14,16 @@ export class BrandResolver {
   ) {
     const brands = await Brand.query().page(offset, limit);
     return brands;
+  }
+
+  @Query(() => [Watch])
+  @UseMiddleware(isAuth)
+  async getBrandProducts(@Arg('brand') brand: string) {
+    const products = await (
+      await Brand.query().findOne('name', brand.toLowerCase())
+    ).$relatedQuery('products');
+
+    return products;
   }
 
   @Mutation(() => Brand)

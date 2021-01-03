@@ -25,7 +25,7 @@ export async function up(knex: Knex): Promise<void> {
 
     .createTable('watches', (table) => {
       table.increments('id').primary();
-      table.string('brand', 255).notNullable();
+      table.string('name', 255).notNullable();
       table.string('model', 255).notNullable();
       table.string('description', 255);
       table.string('movement', 255);
@@ -39,6 +39,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer('price');
       table.boolean('featured').defaultTo(false);
       table.boolean('confirmed').defaultTo(false);
+      table.integer('brand_id').nullable();
 
       // Calibar
       table.string('calibar');

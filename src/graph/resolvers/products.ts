@@ -1,5 +1,5 @@
 import { isAuth } from 'middlewares';
-import { User, Watch, Image } from 'models';
+import { User, Watch, Image, Brand } from 'models';
 import { Context, WatchResponse } from '../types';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { createWriteStream } from 'fs';
@@ -47,7 +47,7 @@ export class ProductResolver {
   async searchProducts(@Arg('brand') brand: string) {
     const products = await Watch.query();
     const result = products.filter((p) => {
-      if (p.brand.search(brand) !== -1) return p;
+      if (p.name.search(brand) !== -1) return p;
     });
 
     return result;
@@ -96,8 +96,9 @@ export class ProductResolver {
     @Arg('clasp', { nullable: true }) clasp: string,
     @Arg('clasp_material', { nullable: true }) clasp_material: string,
   ) {
+    const bbrand = await Brand.query().findOne({ name: brand.toLowerCase() });
     const product = await Watch.query().insert({
-      brand,
+      name: brand.toLowerCase(),
       model,
       price,
       description,
@@ -124,7 +125,7 @@ export class ProductResolver {
       clasp,
       clasp_material,
     });
-
+    await bbrand.$relatedQuery('products').relate(product);
     return product;
   }
 
@@ -169,7 +170,7 @@ export class ProductResolver {
     const product = await Watch.query()
       .findById(id)
       .patch({
-        brand,
+        name: brand,
         model,
         price,
         description,

@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { Image } from 'models';
+import { Image, Brand } from 'models';
 import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
@@ -8,7 +8,7 @@ export class Watch extends Model {
   readonly id!: number;
 
   // Basic info
-  @Field() brand: string;
+  @Field() name: string;
   @Field() model: string;
   @Field() description: string;
   @Field() condition: string;
@@ -23,6 +23,7 @@ export class Watch extends Model {
   @Field({ nullable: true }) movement: string;
   @Field({ nullable: true }) bracelet_material: string;
   @Field({ nullable: true }) gender: string;
+  @Field({ nullable: true }) brand_id: number;
 
   // Calibar
   @Field({ nullable: true }) calibar: string;
@@ -57,6 +58,14 @@ export class Watch extends Model {
       join: {
         from: 'watches.id',
         to: 'images.watch_id',
+      },
+    },
+    brand: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: Brand,
+      join: {
+        from: 'watches.brand_id',
+        to: 'brands.id',
       },
     },
   });
