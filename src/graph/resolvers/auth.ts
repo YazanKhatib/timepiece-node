@@ -220,6 +220,10 @@ export class AuthResolver {
   async confirmEmail(@Arg('email') email: string, @Arg('code') code: string) {
     const user = await User.query().findOne('email', email);
 
+    if (!user) {
+      throw new Error('Could not find user!');
+    }
+
     const token = verify(user.token, code);
     if (!token) {
       throw new Error('Invalid code');
