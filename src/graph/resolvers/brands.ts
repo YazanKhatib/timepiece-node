@@ -3,6 +3,7 @@ import { Brand, Watch } from 'models';
 import { BrandResponse } from '../types';
 import { Resolver, Query, Mutation, Arg, UseMiddleware } from 'type-graphql';
 import { UniqueViolationError } from 'objection';
+import { Logger } from 'services';
 
 @Resolver()
 export class BrandResolver {
@@ -59,11 +60,12 @@ export class BrandResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteBrand(@Arg('id') id: string) {
+  async deleteBrands(@Arg('ids', (type) => [Number]) ids: number[]) {
     try {
-      const value = await Brand.query().deleteById(id);
+      const value = await Brand.query().delete().whereIn('id', ids);
       return value;
     } catch (e) {
+      Logger.error(e.message);
       return false;
     }
   }

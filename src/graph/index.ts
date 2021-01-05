@@ -5,6 +5,7 @@ import { buildSchema } from 'type-graphql';
 import { initializeDB } from '../database';
 import {
   AuthResolver,
+  UserResolver,
   BrandResolver,
   ProductResolver,
   DashboardResolver,
@@ -16,6 +17,7 @@ export const startServer = async (app: Application) => {
     schema: await buildSchema({
       resolvers: [
         AuthResolver,
+        UserResolver,
         BrandResolver,
         ProductResolver,
         FavoriteResolver,

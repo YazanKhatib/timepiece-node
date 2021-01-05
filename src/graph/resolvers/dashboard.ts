@@ -3,6 +3,7 @@ import { UserResponse } from '../types';
 
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 import { compare } from 'bcrypt';
+
 @Resolver()
 export class DashboardResolver {
   @Query(() => UserResponse)
@@ -16,6 +17,49 @@ export class DashboardResolver {
       : await User.query().where('dealer', false).page(offset, limit);
 
     return users;
+  }
+
+  @Query(() => User)
+  async getUser(@Arg('id') id: number) {
+    const user = User.query().findById(id);
+    if (!user) {
+      throw new Error('Could not find user!');
+    }
+    return user;
+  }
+
+  @Mutation(() => User)
+  async updateUserbyId(
+    @Arg('id') id: number,
+    @Arg('phone', { defaultValue: undefined, nullable: true }) phone: string,
+    @Arg('birth', { defaultValue: undefined, nullable: true }) birth: Date,
+    @Arg('gender', { defaultValue: undefined, nullable: true }) gender: string,
+    @Arg('address', { defaultValue: undefined, nullable: true })
+    address: string,
+    @Arg('isAdmin', { defaultValue: undefined, nullable: true })
+    isAdmin: boolean,
+    @Arg('blocked', { defaultValue: undefined, nullable: true })
+    blocked: boolean,
+    @Arg('last_name', { defaultValue: undefined, nullable: true })
+    last_name: string,
+    @Arg('first_name', { defaultValue: undefined, nullable: true })
+    first_name: string,
+  ) {
+    const user = await User.query()
+      .findById(id)
+      .patch({
+        phone,
+        birth,
+        gender,
+        address,
+        last_name,
+        first_name,
+        blocked,
+        isAdmin,
+      })
+      .returning('*');
+
+    return user;
   }
 
   @Mutation(() => User)

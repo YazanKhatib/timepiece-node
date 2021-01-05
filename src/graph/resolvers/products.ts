@@ -12,6 +12,7 @@ import {
   Resolver,
   UseMiddleware,
 } from 'type-graphql';
+import { Logger } from 'services';
 
 @Resolver()
 export class ProductResolver {
@@ -47,7 +48,7 @@ export class ProductResolver {
   async searchProducts(@Arg('brand') brand: string) {
     const products = await Watch.query();
     const result = products.filter((p) => {
-      if (p.name.search(brand) !== -1) return p;
+      if (p.name.search(brand.toLowerCase()) !== -1) return p;
     });
 
     return result;
@@ -265,11 +266,12 @@ export class ProductResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteProduct(@Arg('id') id: string) {
+  async deleteProducts(@Arg('ids', (type) => [Number]) ids: number[]) {
     try {
-      await Watch.query().deleteById(id);
+      await Watch.query().delete().whereIn('id', ids);
       return true;
     } catch (e) {
+      Logger.error(e.message);
       return false;
     }
   }
