@@ -1,36 +1,16 @@
+import nodemailer from 'nodemailer';
+import { User } from 'models';
 import { hash, compare } from 'bcrypt';
 import { isAuth } from 'middlewares';
-import { User } from 'models';
+import { verify } from 'jsonwebtoken';
+import { UniqueViolationError } from 'objection';
 import {
   createAccessToken,
   createConfirmationCode,
   createRefreshToken,
 } from 'services';
-import {
-  Ctx,
-  Arg,
-  Field,
-  Mutation,
-  Resolver,
-  ObjectType,
-  UseMiddleware,
-} from 'type-graphql';
-import { Context } from '../types';
-import nodemailer from 'nodemailer';
-import { verify } from 'jsonwebtoken';
-import { UniqueViolationError } from 'objection';
-
-@ObjectType()
-class LoginResponse {
-  @Field()
-  user: User;
-
-  @Field()
-  accessToken: string;
-
-  @Field()
-  refreshToken: string;
-}
+import { Ctx, Arg, Mutation, Resolver, UseMiddleware } from 'type-graphql';
+import { Context, LoginResponse } from '../types';
 
 @Resolver()
 export class AuthResolver {

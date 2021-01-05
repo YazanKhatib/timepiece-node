@@ -9,6 +9,17 @@ export interface Context {
 }
 
 @ObjectType()
+export class LoginResponse {
+  @Field()
+  user: User;
+
+  @Field()
+  accessToken: string;
+
+  @Field()
+  refreshToken: string;
+}
+@ObjectType()
 export class UserResponse {
   @Field()
   total: number;

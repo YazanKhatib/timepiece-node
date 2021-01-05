@@ -1,8 +1,9 @@
 import { User } from 'models';
-import { UserResponse } from '../types';
+import { compare } from 'bcrypt';
+import { LoginResponse, UserResponse } from '../types';
 
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
-import { compare } from 'bcrypt';
+import { createAccessToken, createRefreshToken } from 'services';
 
 @Resolver()
 export class DashboardResolver {
@@ -62,7 +63,7 @@ export class DashboardResolver {
     return user;
   }
 
-  @Mutation(() => User)
+  @Mutation(() => LoginResponse)
   async loginAdmin(
     @Arg('username') username: string,
     @Arg('password') password: string,
@@ -77,6 +78,10 @@ export class DashboardResolver {
       throw new Error('Bad password!');
     }
 
-    return admin;
+    return {
+      user: admin,
+      accessToken: createAccessToken(admin),
+      refreshToken: createRefreshToken(admin),
+    };
   }
 }
