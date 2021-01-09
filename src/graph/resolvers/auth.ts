@@ -21,21 +21,19 @@ export class AuthResolver {
     @Arg('password') password: string,
     @Arg('phone', { nullable: true }) phone: string,
     @Arg('address', { nullable: true }) address: string,
-    @Arg('dealer', { defaultValue: false }) dealer: boolean,
-    @Arg('isAdmin', { defaultValue: false }) isAdmin: boolean,
+    @Arg('role', { defaultValue: 'user' }) role: 'user' | 'dealer' | 'admin',
   ) {
     const hashedPassword = await hash(password, 10);
-    const blocked = dealer ? true : false;
+    const blocked = role === 'dealer' ? true : false;
     try {
       await User.query().insert({
         email,
         username,
         password: hashedPassword,
         phone,
-        dealer,
         blocked,
         address,
-        isAdmin,
+        role,
       });
     } catch (e) {
       if (e instanceof UniqueViolationError)

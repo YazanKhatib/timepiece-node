@@ -7,22 +7,20 @@ export class User extends Model {
   @Field()
   readonly id!: number;
 
+  token: string;
+  count: number;
+  password: string;
   @Field() username!: string;
-  @Field() password: string;
   @Field() email: string;
-  @Field() count: number;
-  @Field() dealer: boolean;
   @Field() blocked: boolean;
   @Field() confirmed: boolean;
   @Field({ nullable: true }) phone?: string;
   @Field({ nullable: true }) birth: Date;
   @Field({ nullable: true }) gender: string;
-  @Field({ defaultValue: false }) isAdmin: boolean;
   @Field({ nullable: true }) address: string;
   @Field({ nullable: true }) first_name: string;
   @Field({ nullable: true }) last_name: string;
-  @Field({ nullable: true }) token: string;
-  @Field((type) => [Watch]) offers: Watch[];
+  @Field({ defaultValue: 'user' }) role: 'user' | 'dealer' | 'admin';
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -52,9 +50,25 @@ export class User extends Model {
         through: {
           from: 'offers.user_id',
           to: 'offers.watch_id',
-          extra: ['proposed_price'],
+          extra: ['proposed_price', 'approved'],
         },
         to: 'watches.id',
+      },
+    },
+    orders: {
+      relation: Model.HasManyRelation,
+      modelClass: Watch,
+      join: {
+        from: 'users.id',
+        to: 'watches.order_id',
+      },
+    },
+    watches: {
+      relation: Model.HasManyRelation,
+      modelClass: Watch,
+      join: {
+        from: 'users.id',
+        to: 'watches.owner_id',
       },
     },
   });

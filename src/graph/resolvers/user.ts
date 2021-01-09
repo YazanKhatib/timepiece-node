@@ -33,8 +33,8 @@ export class UserResolver {
     @Arg('gender', { defaultValue: undefined, nullable: true }) gender: string,
     @Arg('address', { defaultValue: undefined, nullable: true })
     address: string,
-    @Arg('isAdmin', { defaultValue: undefined, nullable: true })
-    isAdmin: boolean,
+    @Arg('role', { defaultValue: undefined, nullable: true })
+    role: 'user' | 'dealer' | 'admin',
     @Arg('blocked', { defaultValue: undefined, nullable: true })
     blocked: boolean,
     @Arg('last_name', { defaultValue: undefined, nullable: true })
@@ -53,7 +53,7 @@ export class UserResolver {
         last_name,
         first_name,
         blocked,
-        isAdmin,
+        role,
       })
       .returning('*');
 

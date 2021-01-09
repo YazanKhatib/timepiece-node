@@ -14,10 +14,9 @@ export async function up(knex: Knex): Promise<void> {
       table.string('password', 255).notNullable();
       table.string('email', 255).unique().notNullable();
       table.integer('count').defaultTo(0);
-      table.boolean('dealer').defaultTo(false);
       table.boolean('blocked').defaultTo(false);
       table.boolean('confirmed').defaultTo(false);
-      table.boolean('isAdmin').defaultTo(false);
+      table.enu('role', ['user', 'dealer', 'admin']).defaultTo('user');
       table.string('username', 255).unique().notNullable();
       table.timestamp('created_at').defaultTo(knex.fn.now());
       table.timestamp('updated_at').defaultTo(knex.fn.now());
@@ -39,7 +38,11 @@ export async function up(knex: Knex): Promise<void> {
       table.integer('price');
       table.boolean('featured').defaultTo(false);
       table.boolean('confirmed').defaultTo(false);
+      table.integer('user_id').nullable();
       table.integer('brand_id').nullable();
+      table.integer('order_id').nullable();
+      table.integer('owner_id').nullable();
+      table.enu('status', ['sale', 'pending', 'sold']).defaultTo('sale');
 
       // Calibar
       table.string('calibar');
@@ -68,6 +71,8 @@ export async function up(knex: Knex): Promise<void> {
       table.increments('id').primary();
       table.integer('user_id').notNullable();
       table.integer('watch_id').notNullable();
+      table.timestamp('created_at').defaultTo(knex.fn.now());
+      table.timestamp('updated_at').defaultTo(knex.fn.now());
     })
 
     .createTable('brands', (table) => {

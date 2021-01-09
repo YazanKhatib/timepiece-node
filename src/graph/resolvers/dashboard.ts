@@ -37,8 +37,8 @@ export class DashboardResolver {
     @Arg('gender', { defaultValue: undefined, nullable: true }) gender: string,
     @Arg('address', { defaultValue: undefined, nullable: true })
     address: string,
-    @Arg('isAdmin', { defaultValue: undefined, nullable: true })
-    isAdmin: boolean,
+    @Arg('role', { defaultValue: undefined, nullable: true })
+    role: 'user' | 'dealer' | 'admin',
     @Arg('blocked', { defaultValue: undefined, nullable: true })
     blocked: boolean,
     @Arg('last_name', { defaultValue: undefined, nullable: true })
@@ -56,7 +56,7 @@ export class DashboardResolver {
         last_name,
         first_name,
         blocked,
-        isAdmin,
+        role,
       })
       .returning('*');
 
@@ -69,7 +69,7 @@ export class DashboardResolver {
     @Arg('password') password: string,
   ) {
     const admin = await User.query().findOne('username', username);
-    if (!admin || !admin.isAdmin) {
+    if (!admin || admin.role !== 'admin') {
       throw new Error('Could not find admin!');
     }
 

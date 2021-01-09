@@ -6,6 +6,9 @@ import { initializeDB } from '../database';
 import {
   AuthResolver,
   UserResolver,
+  ImageResolver,
+  OrderResolver,
+  OfferResolver,
   BrandResolver,
   ProductResolver,
   DashboardResolver,
@@ -18,6 +21,9 @@ export const startServer = async (app: Application) => {
       resolvers: [
         AuthResolver,
         UserResolver,
+        ImageResolver,
+        OrderResolver,
+        OfferResolver,
         BrandResolver,
         ProductResolver,
         FavoriteResolver,

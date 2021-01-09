@@ -1,18 +1,17 @@
 import { isAuth } from 'middlewares';
-import { User, Watch, Image, Brand } from 'models';
+import { Watch, Brand, User } from 'models';
 import { Context, WatchResponse } from '../types';
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
-import { createWriteStream } from 'fs';
 
 import {
-  Ctx,
   Arg,
   Query,
   Mutation,
   Resolver,
   UseMiddleware,
+  Ctx,
 } from 'type-graphql';
 import { Logger } from 'services';
+import { Model } from 'objection';
 
 @Resolver()
 export class ProductResolver {
@@ -45,6 +44,16 @@ export class ProductResolver {
 
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
+  async getDealerProducts(@Ctx() { payload }: Context) {
+    const user = await User.query().findById(payload!.userId);
+    if (user.role !== 'dealer') {
+      throw new Error('User is not a dealer!');
+    }
+    return await user.$relatedQuery('watches');
+  }
+
+  @Query(() => [Watch])
+  @UseMiddleware(isAuth)
   async searchProducts(@Arg('brand') brand: string) {
     const products = await Watch.query();
     const result = products.filter((p) => {
@@ -52,13 +61,6 @@ export class ProductResolver {
     });
 
     return result;
-  }
-
-  @Query(() => [User])
-  @UseMiddleware(isAuth)
-  async getOffers() {
-    const offers = await User.query().withGraphFetched('offers');
-    return offers;
   }
 
   @Mutation(() => Watch)
@@ -96,37 +98,54 @@ export class ProductResolver {
     @Arg('bracelet_color', { nullable: true }) bracelet_color: string,
     @Arg('clasp', { nullable: true }) clasp: string,
     @Arg('clasp_material', { nullable: true }) clasp_material: string,
+    @Ctx() { payload }: Context,
   ) {
-    const bbrand = await Brand.query().findOne({ name: brand.toLowerCase() });
-    const product = await Watch.query().insert({
-      name: brand.toLowerCase(),
-      model,
-      price,
-      description,
-      movement,
-      case_material,
-      bracelet_material,
-      production_year,
-      condition,
-      delivery,
-      gender,
-      location,
-      featured,
-      calibar,
-      base_calibar,
-      power_reserve,
-      jewels,
-      case_diameter,
-      water_resistance,
-      bezel_material,
-      crystal,
-      dial,
-      dial_numbers,
-      bracelet_color,
-      clasp,
-      clasp_material,
+    const user = await User.query().findById(payload!.userId);
+    if (user.role === 'user') {
+      throw new Error('User do not have post permisson!');
+    }
+    const brandRec = await Brand.query().findOne({ name: brand.toLowerCase() });
+    let product;
+    await Model.transaction(async (tr) => {
+      product = await Watch.query().insert({
+        name: brand.toLowerCase(),
+        model,
+        price,
+        description,
+        movement,
+        case_material,
+        bracelet_material,
+        production_year,
+        condition,
+        delivery,
+        gender,
+        location,
+        featured,
+        calibar,
+        base_calibar,
+        power_reserve,
+        jewels,
+        case_diameter,
+        water_resistance,
+        bezel_material,
+        crystal,
+        dial,
+        dial_numbers,
+        bracelet_color,
+        clasp,
+        clasp_material,
+      });
+      await user.$relatedQuery('watches').relate(product);
+      await brandRec.$relatedQuery('products').relate(product);
+
+      try {
+        await tr.commit();
+      } catch (e) {
+        await tr.rollback();
+        Logger.error(e.message);
+      }
     });
-    await bbrand.$relatedQuery('products').relate(product);
+
     return product;
   }
 
@@ -274,48 +293,5 @@ export class ProductResolver {
       Logger.error(e.message);
       return false;
     }
-  }
-
-  @Mutation(() => Boolean)
-  async addPicture(
-    // @Arg('id') id: string,
-    @Arg('picture', () => GraphQLUpload)
-    { createReadStream, filename }: FileUpload,
-  ) {
-    const loc = __dirname + `/../../../uploads/${filename}`;
-    createReadStream().pipe(createWriteStream(loc));
-
-    const watch = await Watch.query().findById(1);
-    const images = await watch.$relatedQuery('images');
-    console.log({ images });
-
-    const image = await Image.query().insert({
-      url: loc,
-      main: images.length ? true : false,
-    });
-
-    console.log({ image });
-    await watch.$relatedQuery('images').relate(image);
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
-  async offerPrice(
-    @Arg('id') id: string,
-    @Arg('proposed_price') price: number,
-    @Ctx() { payload }: Context,
-  ) {
-    const user = await User.query().findById(payload!.userId);
-
-    const watch = await Watch.query().findById(id);
-
-    await user
-      .$relatedQuery('offers')
-      //@ts-ignore
-      .relate({ id: watch.id, proposed_price: JSON.stringify(price) });
-
-    return true;
   }
 }

@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { Image, Brand } from 'models';
+import { User, Brand, Image } from 'models';
 import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
@@ -10,15 +10,16 @@ export class Watch extends Model {
   // Basic info
   @Field() name: string;
   @Field() model: string;
-  @Field() description: string;
-  @Field() condition: string;
+  @Field() price: number;
+  @Field() delivery: string;
   @Field() location: string;
   @Field() featured: boolean;
+  @Field() condition: string;
   @Field() confirmed: boolean;
-  @Field() delivery: string;
-  @Field() price: number;
+  @Field() description: string;
   @Field() proposed_price: number;
   @Field() production_year: number;
+  @Field() status: 'sale' | 'pending' | 'sold';
   @Field({ nullable: true }) case_material: string;
   @Field({ nullable: true }) movement: string;
   @Field({ nullable: true }) bracelet_material: string;
@@ -66,6 +67,30 @@ export class Watch extends Model {
       join: {
         from: 'watches.brand_id',
         to: 'brands.id',
+      },
+    },
+    user: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: User,
+      join: {
+        from: 'watches.user_id',
+        to: 'users.id',
+      },
+    },
+    order: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: User,
+      join: {
+        from: 'watches.order_id',
+        to: 'users.id',
+      },
+    },
+    owner: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: User,
+      join: {
+        from: 'watches.owner_id',
+        to: 'users.id',
       },
     },
   });
