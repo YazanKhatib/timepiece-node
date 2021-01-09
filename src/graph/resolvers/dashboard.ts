@@ -14,8 +14,8 @@ export class DashboardResolver {
     @Arg('limit', { defaultValue: 10 }) limit: number,
   ) {
     const users = dealer
-      ? await User.query().where('dealer', true).page(offset, limit)
-      : await User.query().where('dealer', false).page(offset, limit);
+      ? await User.query().where('role', 'dealer').page(offset, limit)
+      : await User.query().where('role', 'user').page(offset, limit);
 
     return users;
   }
