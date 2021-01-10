@@ -17,8 +17,23 @@ export class OrderResolver {
   @UseMiddleware(isAuth)
   async getOrders() {
     const orders = await User.query().withGraphFetched('orders');
-    console.log('orders', orders);
     return orders;
+  }
+
+  @Query(() => [Watch])
+  @UseMiddleware(isAuth)
+  async getDealerSoldOrders(@Ctx() { payload }: Context) {
+    const orders = await User.query()
+      .findById(payload!.userId)
+      .withGraphFetched('orders')
+      .modifyGraph('orders', (builder) => {
+        builder.where('status', 'sold');
+      });
+
+    console.log(orders);
+
+    // @ts-ignore
+    return orders.orders;
   }
 
   @Mutation(() => Boolean)
