@@ -227,58 +227,32 @@ export class ProductResolver {
   @UseMiddleware(isAuth)
   async filterProducts(
     @Arg('brand', { nullable: true }) brand: string,
-    @Arg('model', { nullable: true }) model: string,
     @Arg('movement', { nullable: true }) movement: string,
     @Arg('case_material', { nullable: true }) case_material: string,
     @Arg('bracelet_material', { nullable: true }) bracelet_material: string,
-    @Arg('production_year', { nullable: true }) production_year: number,
     @Arg('condition', { nullable: true }) condition: string,
     @Arg('delivery', { nullable: true }) delivery: string,
     @Arg('gender', { nullable: true }) gender: string,
     @Arg('location', { nullable: true }) location: string,
-
-    // Calibar Optional
-    @Arg('calibar', { nullable: true }) calibar: string,
-    @Arg('base_calibar', { nullable: true }) base_calibar: string,
-    @Arg('power_reserve', { nullable: true }) power_reserve: number,
-    @Arg('jewels', { nullable: true }) jewels: number,
-
-    // Case Optional
-    @Arg('case_diameter', { nullable: true }) case_diameter: number,
-    @Arg('water_resistance', { nullable: true }) water_resistance: number,
-    @Arg('bezel_material', { nullable: true }) bezel_material: string,
-    @Arg('crystal', { nullable: true }) crystal: string,
-    @Arg('dial', { nullable: true }) dial: string,
-    @Arg('dial_numbers', { nullable: true }) dial_numbers: string,
-
-    // Bracelet/strap Optional
-    @Arg('bracelet_color', { nullable: true }) bracelet_color: string,
-    @Arg('clasp', { nullable: true }) clasp: string,
-    @Arg('clasp_material', { nullable: true }) clasp_material: string,
+    @Arg('price', (type) => [Number], { nullable: true }) price: number[],
+    @Arg('production_year', (type) => [Number], { nullable: true })
+    production_year: number[],
   ) {
     const watches = Watch.query()
-      .where('brand', brand)
-      .where('model', model)
+      .skipUndefined()
+      .where('name', brand)
+      .where('gender', gender)
       .where('movement', movement)
+      .where('location', location)
+      .where('delivery', delivery)
+      .where('condition', condition)
       .where('case_material', case_material)
       .where('bracelet_material', bracelet_material)
-      .where('production_year', production_year)
-      .where('condition', condition)
-      .where('delivery', delivery)
-      .where('gender', gender)
-      .where('location', location)
-      .where('calibar', calibar)
-      .where('base_calibar', base_calibar)
-      .where('power_reserve', power_reserve)
-      .where('case_diameter', case_diameter)
-      .where('water_resistance', water_resistance)
-      .where('bezel_material', bezel_material)
-      .where('crystal', crystal)
-      .where('dial', dial)
-      .where('dial_numbers', dial_numbers)
-      .where('bracelet_color', bracelet_color)
-      .where('clasp', clasp)
-      .where('clasp_material', clasp_material);
+      .whereBetween('price', [price[0], price[1]])
+      .whereBetween('production_year', [
+        production_year[0],
+        production_year[1],
+      ]);
 
     return watches;
   }
