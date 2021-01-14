@@ -22,6 +22,7 @@ export class CertificateResolver {
     }
 
     try {
+      //@ts-ignore
       await Certificate.query().insert({ user_id: user.id });
       return true;
     } catch (e) {

@@ -5,7 +5,6 @@ import { ObjectType, Field } from 'type-graphql';
 @ObjectType()
 export class Certificate extends Model {
   @Field() readonly id!: number;
-  @Field() user_id!: number;
   @Field() fulfilled!: boolean;
   @Field() createdAt?: Date;
   @Field() updatedAt?: Date;
