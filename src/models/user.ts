@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { Watch } from 'models';
+import { Watch, Certificate } from 'models';
 import { ObjectType, Field } from 'type-graphql';
 
 @ObjectType()
@@ -69,6 +69,14 @@ export class User extends Model {
       join: {
         from: 'users.id',
         to: 'watches.owner_id',
+      },
+    },
+    certificates: {
+      relation: Model.HasManyRelation,
+      modelClass: Certificate,
+      join: {
+        from: 'users.id',
+        to: 'certificates.user_id',
       },
     },
   });

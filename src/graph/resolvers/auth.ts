@@ -8,6 +8,7 @@ import {
   createAccessToken,
   createConfirmationCode,
   createRefreshToken,
+  Logger,
 } from 'services';
 import { Ctx, Arg, Mutation, Resolver, UseMiddleware } from 'type-graphql';
 import { Context, LoginResponse } from '../types';
@@ -55,9 +56,10 @@ export class AuthResolver {
       throw new Error('Could not find user!');
     }
 
-    if (!user.confirmed || user.blocked) {
-      throw new Error('User account is not confirmed!');
-    }
+    console.log([user.confirmed, user.blocked]);
+    // if (!user.confirmed || user.blocked) {
+    //   throw new Error('User account is not confirmed!');
+    // }
 
     const valid = await compare(password, user.password);
     if (!valid) {
@@ -99,49 +101,53 @@ export class AuthResolver {
       token,
     });
 
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: 'yazankhatib97@gmail.com',
-        pass: 'stukhuycuxbroiue',
-      },
-    });
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'yazankhatib97@gmail.com',
+          pass: 'stukhuycuxbroiue',
+        },
+      });
 
-    transporter.sendMail({
-      from: '"Timepiece" <yazankhatib97@gmail.com>',
-      to: email,
-      subject: 'timepiece confirmation code',
-      text: 'Confirm your account',
-      html: `
-        <div>
-          <table dir="ltr">
-            <tbody>
-                <tr>
-                  <td id="m_-1891783621300816003i2" style="padding:0;font-family:'Segoe UI Light','Segoe UI','Helvetica Neue Medium',Arial,sans-serif;font-size:41px;color:#2672ec">Security code</td>
-                </tr>
-                <tr>
-                  <td id="m_-1891783621300816003i3" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">
-                      Please use the following security code to confirm your account
-                  </td>
-                </tr>
-                <tr>
-                  <td id="m_-1891783621300816003i4" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">
-                      Security code: <span style="font-family:'Segoe UI Bold','Segoe UI Semibold','Segoe UI','Helvetica Neue Medium',Arial,sans-serif;font-size:14px;font-weight:bold;color:#2a2a2a">${otp}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td id="m_-1891783621300816003i6" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">Thanks,</td>
-                </tr>
-                <tr>
-                  <td id="m_-1891783621300816003i7" style="padding:0;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">Timepiece team</td>
-                </tr>
-            </tbody>
-          </table>
-          <div class="yj6qo"></div>
-          <div class="adL"></div>
-        </div>
-      `,
-    });
+      transporter.sendMail({
+        from: '"Timepiece" <yazankhatib97@gmail.com>',
+        to: email,
+        subject: 'timepiece confirmation code',
+        text: 'Confirm your account',
+        html: `
+          <div>
+            <table dir="ltr">
+              <tbody>
+                  <tr>
+                    <td id="m_-1891783621300816003i2" style="padding:0;font-family:'Segoe UI Light','Segoe UI','Helvetica Neue Medium',Arial,sans-serif;font-size:41px;color:#2672ec">Security code</td>
+                  </tr>
+                  <tr>
+                    <td id="m_-1891783621300816003i3" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">
+                        Please use the following security code to confirm your account
+                    </td>
+                  </tr>
+                  <tr>
+                    <td id="m_-1891783621300816003i4" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">
+                        Security code: <span style="font-family:'Segoe UI Bold','Segoe UI Semibold','Segoe UI','Helvetica Neue Medium',Arial,sans-serif;font-size:14px;font-weight:bold;color:#2a2a2a">${otp}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td id="m_-1891783621300816003i6" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">Thanks,</td>
+                  </tr>
+                  <tr>
+                    <td id="m_-1891783621300816003i7" style="padding:0;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">Timepiece team</td>
+                  </tr>
+              </tbody>
+            </table>
+            <div class="yj6qo"></div>
+            <div class="adL"></div>
+          </div>
+        `,
+      });
+    } catch (e) {
+      Logger.error(e.message);
+    }
 
     return otp;
   }

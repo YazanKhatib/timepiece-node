@@ -16,24 +16,30 @@ export class OrderResolver {
   @Query(() => [OrderResponse])
   @UseMiddleware(isAuth)
   async getOrders() {
-    const orders = await User.query().withGraphFetched('orders');
+    const orders = await User.query()
+      .whereNot('role', 'admin')
+      .withGraphFetched('orders');
     return orders;
   }
 
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
-  async getDealerSoldOrders(@Ctx() { payload }: Context) {
-    const orders = await User.query()
-      .findById(payload!.userId)
-      .withGraphFetched('orders')
-      .modifyGraph('orders', (builder) => {
-        builder.where('status', 'sold');
-      });
-
-    console.log(orders);
-
-    // @ts-ignore
-    return orders.orders;
+  async getPurchases(
+    @Arg('status') status: 'sale' | 'sold' | 'pending',
+    @Ctx() { payload }: Context,
+  ) {
+    try {
+      const orders = await User.query()
+        .findById(payload!.userId)
+        .withGraphFetched('orders')
+        .modifyGraph('orders', (builder) => {
+          builder.where('status', status);
+        });
+      //@ts-ignore
+      return orders.orders;
+    } catch (e) {
+      Logger.error(e.message);
+    }
   }
 
   @Mutation(() => Boolean)

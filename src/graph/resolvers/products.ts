@@ -35,7 +35,6 @@ export class ProductResolver {
       .findOne('id', id)
       .withGraphFetched('images');
 
-    console.log(product);
     if (!product) {
       throw new Error('Product not found');
     }
@@ -44,12 +43,24 @@ export class ProductResolver {
 
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
-  async getDealerProducts(@Ctx() { payload }: Context) {
+  async getDealerProducts(
+    @Arg('status', { nullable: true }) status: 'sale' | 'sold' | 'pending',
+    @Arg('confirmed', { defaultValue: true }) confirmed: boolean,
+    @Ctx() { payload }: Context,
+  ) {
     const user = await User.query().findById(payload!.userId);
+
     if (user.role !== 'dealer') {
       throw new Error('User is not a dealer!');
     }
-    return await user.$relatedQuery('watches');
+    const value = await User.query()
+      .findById(payload!.userId)
+      .withGraphFetched('watches')
+      .modifyGraph('watches', (builder) => {
+        builder.where('status', status).where('confirmed', confirmed);
+      });
+    // @ts-ignore
+    return value.watches;
   }
 
   @Query(() => [Watch])

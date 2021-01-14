@@ -45,7 +45,7 @@ export class OfferResponse {
   @Field({ nullable: true }) address: string;
   @Field({ nullable: true }) first_name: string;
   @Field({ nullable: true }) last_name: string;
-  @Field({ defaultValue: 'user' }) role: 'user' | 'dealer' | 'admin';
+  @Field({ defaultValue: 'user' }) role: 'sale' | 'sold' | 'pending';
   @Field((type) => [Watch]) offers: Watch[];
 }
 @ObjectType()
@@ -61,6 +61,6 @@ export class OrderResponse {
   @Field({ nullable: true }) address: string;
   @Field({ nullable: true }) first_name: string;
   @Field({ nullable: true }) last_name: string;
-  @Field({ defaultValue: 'user' }) role: 'user' | 'dealer' | 'admin';
+  @Field({ defaultValue: 'user' }) role: 'sale' | 'sold' | 'pending';
   @Field((type) => [Watch]) orders: Watch[];
 }

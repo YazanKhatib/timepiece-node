@@ -13,6 +13,7 @@ import {
   ProductResolver,
   DashboardResolver,
   FavoriteResolver,
+  CertificateResolver,
 } from './resolvers/index';
 
 export const startServer = async (app: Application) => {
@@ -28,6 +29,7 @@ export const startServer = async (app: Application) => {
         ProductResolver,
         FavoriteResolver,
         DashboardResolver,
+        CertificateResolver,
       ],
     }),
     context: ({ req, res }) => ({ req, res }),
