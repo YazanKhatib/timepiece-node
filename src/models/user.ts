@@ -71,7 +71,7 @@ export class User extends Model {
         to: 'watches.owner_id',
       },
     },
-    certificates: {
+    requests: {
       relation: Model.HasManyRelation,
       modelClass: Certificate,
       join: {
