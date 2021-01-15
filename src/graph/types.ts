@@ -64,3 +64,12 @@ export class OrderResponse {
   @Field({ defaultValue: 'user' }) role: 'sale' | 'sold' | 'pending';
   @Field((type) => [Watch]) orders: Watch[];
 }
+
+@ObjectType()
+export class CertificateResponse {
+  @Field() readonly id!: number;
+  @Field() fulfilled!: boolean;
+  @Field({ nullable: true }) created_at: Date;
+  @Field({ nullable: true }) updated_at: Date;
+  @Field() user: User;
+}

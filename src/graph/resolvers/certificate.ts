@@ -1,5 +1,5 @@
 import { User, Certificate } from 'models';
-import { Context } from '../types';
+import { CertificateResponse, Context } from '../types';
 import {
   Arg,
   Ctx,
@@ -13,9 +13,15 @@ import { isAuth } from 'middlewares';
 
 @Resolver()
 export class CertificateResolver {
+  @Query(() => [CertificateResponse])
+  @UseMiddleware(isAuth)
+  async getCertificates() {
+    return await Certificate.query().withGraphFetched('user');
+  }
+
   @Query(() => Boolean)
   @UseMiddleware(isAuth)
-  async sumbitCertificate(@Ctx() { payload }: Context) {
+  async submitCertificate(@Ctx() { payload }: Context) {
     const user = await User.query().findById(payload!.userId);
     if (user.role !== 'dealer') {
       throw new Error('User  do not have permission');
@@ -23,7 +29,7 @@ export class CertificateResolver {
 
     try {
       //@ts-ignore
-      await Certificate.query().insert({ user_id: user.id });
+      await user.$relatedQuery('requests').insert({ fulfilled: false });
       return true;
     } catch (e) {
       Logger.error(e.message);
