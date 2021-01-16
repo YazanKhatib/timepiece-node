@@ -102,7 +102,7 @@ export class AuthResolver {
     });
 
     try {
-      const transporter = nodemailer.createTransport({
+      const transporter = await nodemailer.createTransport({
         service: 'Gmail',
         auth: {
           user: 'yazankhatib97@gmail.com',
@@ -110,7 +110,7 @@ export class AuthResolver {
         },
       });
 
-      transporter.sendMail({
+      await transporter.sendMail({
         from: '"Timepiece" <yazankhatib97@gmail.com>',
         to: email,
         subject: 'timepiece confirmation code',
@@ -175,4 +175,14 @@ export class AuthResolver {
       refreshToken: createRefreshToken(user),
     };
   }
+
+  // @Mutation(() => Boolean)
+  // async forgotPassword(@Arg('email') email: string) {
+  //   const user = User.query().findOne('email', email);
+  //   if (!user) {
+  //     throw new Error('Could not find user!');
+  //   }
+
+  //   return true;
+  // }
 }
