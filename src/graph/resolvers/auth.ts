@@ -33,12 +33,14 @@ export class AuthResolver {
         password: hashedPassword,
         phone,
         blocked,
-        address,
+        address: JSON.parse(address.replace(/'/g, '"')),
         role,
       });
     } catch (e) {
       if (e instanceof UniqueViolationError)
         throw new Error('User already exist!');
+      Logger.error(e.message);
+      throw new Error(e.message);
     }
 
     const otp = this.sendEmail(email);
@@ -155,7 +157,6 @@ export class AuthResolver {
   @Mutation(() => LoginResponse)
   async confirmEmail(@Arg('email') email: string, @Arg('code') code: string) {
     const user = await User.query().findOne('email', email);
-
     if (!user) {
       throw new Error('Could not find user!');
     }
