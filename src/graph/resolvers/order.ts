@@ -74,6 +74,7 @@ export class OrderResolver {
     try {
       if (approved)
         await Watch.query().findById(watchId).patch({ status: 'sold' });
+      else await Watch.query().findById(watchId).patch({ status: 'sale' });
       return true;
     } catch (e) {
       Logger.error(e.message);
