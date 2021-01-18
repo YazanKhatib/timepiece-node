@@ -16,7 +16,7 @@ export class OfferResolver {
   @Query(() => [OfferResponse])
   @UseMiddleware(isAuth)
   async getOffers() {
-    const offers = await User.query().withGraphFetched('offers');
+    const offers = await User.query().withGraphFetched('offers').orderBy('id');
     return offers;
   }
 

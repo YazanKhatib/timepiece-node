@@ -16,7 +16,7 @@ export class FavoriteResolver {
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
   async getFavorites(@Ctx() { payload }: Context) {
-    const user = await User.query().findById(payload!.userId);
+    const user = await User.query().findById(payload!.userId).orderBy('id');
     if (!user) {
       throw new Error('Could not find user!');
     }

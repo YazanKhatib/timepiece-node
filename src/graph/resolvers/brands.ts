@@ -13,7 +13,7 @@ export class BrandResolver {
     @Arg('offset', { defaultValue: 0 }) offset: number,
     @Arg('limit', { defaultValue: 10 }) limit: number,
   ) {
-    const brands = await Brand.query().page(offset, limit);
+    const brands = await Brand.query().page(offset, limit).orderBy('id');
     return brands;
   }
 

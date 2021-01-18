@@ -16,7 +16,7 @@ export class CertificateResolver {
   @Query(() => [CertificateResponse])
   @UseMiddleware(isAuth)
   async getCertificates() {
-    return await Certificate.query().withGraphFetched('user');
+    return await Certificate.query().withGraphFetched('user').orderBy('id');
   }
 
   @Query(() => Boolean)

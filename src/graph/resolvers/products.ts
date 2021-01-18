@@ -23,8 +23,11 @@ export class ProductResolver {
     @Arg('limit', { defaultValue: 10 }) limit: number,
   ) {
     const products = featured
-      ? await Watch.query().where('featured', true).page(offset, limit)
-      : await Watch.query().page(offset, limit);
+      ? await Watch.query()
+          .where('featured', true)
+          .page(offset, limit)
+          .orderBy('id')
+      : await Watch.query().page(offset, limit).orderBy('id');
     return products;
   }
 

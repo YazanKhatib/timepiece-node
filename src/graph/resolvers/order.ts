@@ -18,7 +18,8 @@ export class OrderResolver {
   async getOrders() {
     const orders = await User.query()
       .whereNot('role', 'admin')
-      .withGraphFetched('orders');
+      .withGraphFetched('orders')
+      .orderBy('id');
     return orders;
   }
 
