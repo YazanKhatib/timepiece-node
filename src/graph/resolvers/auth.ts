@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { User } from 'models';
 import { hash, compare } from 'bcrypt';
 import { isAuth } from 'middlewares';
-import { verify } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { UniqueViolationError } from 'objection';
 import {
   createAccessToken,
@@ -33,7 +33,7 @@ export class AuthResolver {
         password: hashedPassword,
         phone,
         blocked,
-        address: JSON.parse(address.replace(/'/g, '"')),
+        address,
         role,
       });
     } catch (e) {
@@ -58,7 +58,6 @@ export class AuthResolver {
       throw new Error('Could not find user!');
     }
 
-    console.log([user.confirmed, user.blocked]);
     // if (!user.confirmed || user.blocked) {
     //   throw new Error('User account is not confirmed!');
     // }
@@ -177,13 +176,52 @@ export class AuthResolver {
     };
   }
 
-  // @Mutation(() => Boolean)
-  // async forgotPassword(@Arg('email') email: string) {
-  //   const user = User.query().findOne('email', email);
-  //   if (!user) {
-  //     throw new Error('Could not find user!');
-  //   }
+  @Mutation(() => Boolean)
+  async forgotPassword(@Arg('email') email: string) {
+    const user = await User.query().findOne('email', email);
+    if (!user) {
+      throw new Error('Could not find user!');
+    }
+    const token = sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
+      expiresIn: '1h',
+    });
 
-  //   return true;
-  // }
+    const transporter = await nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: 'yazankhatib97@gmail.com',
+        pass: 'stukhuycuxbroiue',
+      },
+    });
+    await transporter.sendMail({
+      to: email,
+      from: '"Timepiece" <yazankhatib97@gmail.com>',
+      subject: 'timepiece password reset',
+      html: `
+      <div>
+        <table dir="ltr">
+          <tbody>
+              <tr>
+                <td id="m_-1891783621300816003i2" style="padding:0;font-family:'Segoe UI Light','Segoe UI','Helvetica Neue Medium',Arial,sans-serif;font-size:41px;color:#2672ec">Password reset</td>
+              </tr>
+              <tr>
+                <td id="m_-1891783621300816003i3" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">
+                    Please use the following link to reset your password <a href="http://localhost:4000/reset-password/${token}">link</a>
+                </td>
+              </tr>
+              <tr>
+                <td id="m_-1891783621300816003i6" style="padding:0;padding-top:25px;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">Thanks,</td>
+              </tr>
+              <tr>
+                <td id="m_-1891783621300816003i7" style="padding:0;font-family:'Segoe UI',Tahoma,Verdana,Arial,sans-serif;font-size:14px;color:#2a2a2a">Timepiece team</td>
+              </tr>
+          </tbody>
+        </table>
+        <div class="yj6qo"></div>
+        <div class="adL"></div>
+      </div>
+    `,
+    });
+    return true;
+  }
 }
