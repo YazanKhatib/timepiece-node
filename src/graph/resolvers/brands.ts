@@ -60,7 +60,7 @@ export class BrandResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteBrands(@Arg('ids', (type) => [Number]) ids: number[]) {
+  async deleteBrands(@Arg('ids', () => [Number]) ids: number[]) {
     try {
       const value = await Brand.query().delete().whereIn('id', ids);
       return value;

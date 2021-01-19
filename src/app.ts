@@ -8,6 +8,7 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { User } from 'models';
 import { startServer } from 'graph';
 import { createAccessToken, createRefreshToken, Logger } from 'services';
+import { hash } from 'bcrypt';
 import cors from 'cors';
 const app: Application = express();
 
@@ -18,8 +19,29 @@ const app: Application = express();
 //   }),
 // );
 
+app.use('/uploads', express.static(__dirname + '/../uploads'));
 app.use(cors());
+app.use(express.urlencoded());
 app.use(graphqlUploadExpress({ maxFileSize: 10000, maxFiles: 10 }));
+
+app.get('/reset-password/:token', async (req, res) => {
+  const { password, confirm } = req.body;
+  if (password !== confirm)
+    return res.send({
+      message: 'Passwords do not match!',
+    });
+
+  try {
+    const hashedPassword = await hash(password, 10);
+    await User.query().findById(1).patch({
+      password: hashedPassword,
+    });
+  } catch (e) {
+    Logger.error(e.message);
+  }
+
+  return res.sendFile(__dirname + '/reset.html');
+});
 
 app.post('/refresh_token', async (req, res) => {
   const { refresh_token: token } = req.headers;

@@ -61,7 +61,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteUsers(@Arg('ids', (type) => [Number]) ids: number[]) {
+  async deleteUsers(@Arg('ids', () => [Number]) ids: number[]) {
     try {
       await User.query().delete().whereIn('id', ids);
       return true;

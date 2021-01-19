@@ -273,7 +273,7 @@ export class ProductResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async deleteProducts(@Arg('ids', (type) => [Number]) ids: number[]) {
+  async deleteProducts(@Arg('ids', () => [Number]) ids: number[]) {
     try {
       await Watch.query().delete().whereIn('id', ids);
       return true;
