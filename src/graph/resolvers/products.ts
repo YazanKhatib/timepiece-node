@@ -248,9 +248,8 @@ export class ProductResolver {
     @Arg('delivery', { nullable: true }) delivery: string,
     @Arg('gender', { nullable: true }) gender: string,
     @Arg('location', { nullable: true }) location: string,
-    @Arg('price', (type) => [Number], { nullable: true }) price: number[],
-    @Arg('production_year', (type) => [Number], { nullable: true })
-    production_year: number[],
+    @Arg('price', () => [Number], { nullable: true }) price: number[],
+    @Arg('year', () => [Number], { nullable: true }) year: number[],
   ) {
     const watches = Watch.query()
       .skipUndefined()
@@ -261,12 +260,11 @@ export class ProductResolver {
       .where('delivery', delivery)
       .where('condition', condition)
       .where('case_material', case_material)
-      .where('bracelet_material', bracelet_material)
-      .whereBetween('price', [price[0], price[1]])
-      .whereBetween('production_year', [
-        production_year[0],
-        production_year[1],
-      ]);
+      .where('bracelet_material', bracelet_material);
+
+    if (price?.length) watches.whereBetween('price', [price[0], price[1]]);
+    if (year?.length)
+      watches.whereBetween('production_year', [year[0], year[1]]);
 
     return watches;
   }
