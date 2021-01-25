@@ -2,3 +2,4 @@ node_modules
 combined.log
 dist
 .env
+src/knexfile.ts
