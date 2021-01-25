@@ -25,6 +25,7 @@ export class Watch extends Model {
   @Field({ nullable: true }) bracelet_material: string;
   @Field({ nullable: true }) gender: string;
   @Field({ nullable: true }) brand_id: number;
+  @Field(() => [Image]) images: Image[];
 
   // Calibar
   @Field({ nullable: true }) calibar: string;
@@ -45,8 +46,8 @@ export class Watch extends Model {
   @Field({ nullable: true }) clasp: string;
   @Field({ nullable: true }) clasp_material: string;
 
-  createdAt?: Date;
-  updatedAt?: Date;
+  @Field() created_at?: Date;
+  @Field() updated_at?: Date;
 
   static get tableName() {
     return 'watches';

@@ -22,8 +22,8 @@ export class User extends Model {
   @Field({ nullable: true }) last_name: string;
   @Field({ defaultValue: 'user' }) role: 'user' | 'dealer' | 'admin';
 
-  createdAt?: Date;
-  updatedAt?: Date;
+  @Field() created_at?: Date;
+  @Field() updated_at?: Date;
 
   static get tableName() {
     return 'users';

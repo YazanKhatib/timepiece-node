@@ -7,8 +7,8 @@ export class Image extends Model {
   @Field() readonly id!: number;
   @Field() url!: string;
   @Field() main: boolean;
-  @Field() createdAt?: Date;
-  @Field() updatedAt?: Date;
+  @Field() created_at?: Date;
+  @Field() updated_at?: Date;
 
   static get tableName() {
     return 'images';
