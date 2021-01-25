@@ -21,8 +21,8 @@ const app: Application = express();
 
 app.use('/uploads', express.static(__dirname + '/../uploads'));
 app.use(cors());
-app.use(express.urlencoded());
-app.use(graphqlUploadExpress({ maxFileSize: 10000, maxFiles: 10 }));
+app.use(express.urlencoded({ extended: true }));
+app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
 app.get('/reset-password/:token', async (req, res) => {
   const { password, confirm } = req.body;

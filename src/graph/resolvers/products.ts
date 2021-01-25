@@ -27,7 +27,11 @@ export class ProductResolver {
           .where('featured', true)
           .page(offset, limit)
           .orderBy('id')
-      : await Watch.query().page(offset, limit).orderBy('id');
+          .withGraphFetched('images')
+      : await Watch.query()
+          .page(offset, limit)
+          .orderBy('id')
+          .withGraphFetched('images');
     return products;
   }
 
