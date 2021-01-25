@@ -10,6 +10,7 @@ import {
   Resolver,
   UseMiddleware,
 } from 'type-graphql';
+import { Logger } from 'services';
 
 @Resolver()
 export class FavoriteResolver {
@@ -27,7 +28,7 @@ export class FavoriteResolver {
 
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
-  async toggleFavorite(@Ctx() { payload }: Context, @Arg('id') id: string) {
+  async toggleFavorite(@Ctx() { payload }: Context, @Arg('id') id: number) {
     const user = await User.query().findById(payload!.userId);
     if (!user) {
       throw new Error('Could not find user!');
@@ -51,6 +52,24 @@ export class FavoriteResolver {
         .$relatedQuery('favorites')
         .unrelate()
         .where('watches.id', watch.id);
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async checkFavorite(@Ctx() { payload }: Context, @Arg('id') id: number) {
+    try {
+      const user = await User.query()
+        .findById(payload!.userId)
+        .withGraphFetched('favorites');
+      const watch = await Watch.query().findById(id);
+
+      //@ts-ignore
+      const result = user.favorites.find((pro) => pro.id === watch.id);
+      return result === undefined ? false : true;
+    } catch (e) {
+      Logger.error(e.message);
       return false;
     }
   }
