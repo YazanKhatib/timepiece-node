@@ -1,6 +1,5 @@
 export * from './user';
 export * from './auth';
-export * from './image';
 export * from './order';
 export * from './offers';
 export * from './brands';
