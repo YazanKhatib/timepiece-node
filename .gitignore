@@ -3,3 +3,4 @@ combined.log
 dist
 uploads
 .env
+yarn-error.log
