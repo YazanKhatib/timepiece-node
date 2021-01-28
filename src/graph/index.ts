@@ -31,7 +31,7 @@ export const startServer = async (app: Application) => {
       ],
     }),
     context: ({ req, res }) => ({ req, res }),
-    uploads: false,
+    uploads: true,
     introspection: true,
     playground: true,
   });
