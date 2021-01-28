@@ -8,11 +8,10 @@ import cors from 'cors';
 import { startServer } from 'graph';
 import { upload } from 'services';
 import { resetPassword, refreshToken, uploadImage } from 'controllers';
-import bodyparser from 'body-parser';
 const app: Application = express();
 
 app.use(cors());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(__dirname + '/../uploads'));
 app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
