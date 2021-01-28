@@ -13,7 +13,6 @@ import {
   DashboardResolver,
   FavoriteResolver,
   CertificateResolver,
-  ImageResolver,
 } from './resolvers/index';
 
 export const startServer = async (app: Application) => {
@@ -22,7 +21,6 @@ export const startServer = async (app: Application) => {
       resolvers: [
         AuthResolver,
         UserResolver,
-        ImageResolver,
         OrderResolver,
         OfferResolver,
         BrandResolver,
