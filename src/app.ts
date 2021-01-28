@@ -11,7 +11,6 @@ import bodyparser from 'body-parser';
 const app: Application = express();
 
 app.use(cors());
-app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use('/uploads', express.static(__dirname + '/../uploads'));
 
