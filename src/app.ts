@@ -11,11 +11,12 @@ import { Watch, Image } from 'models';
 const app: Application = express();
 
 app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(__dirname + '/../uploads'));
 // app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
 
-app.get('/reset-password/:token', resetPassword);
+app.post('/reset-password/:token', resetPassword);
 app.post('/refresh_token', refreshToken);
 app.post('/upload', upload.single('file'), async (req, res) => {
   const { id } = req.headers;
