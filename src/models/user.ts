@@ -20,6 +20,7 @@ export class User extends Model {
   @Field({ nullable: true }) address: string;
   @Field({ nullable: true }) first_name: string;
   @Field({ nullable: true }) last_name: string;
+  @Field({ nullable: true }) fcm_token: string;
   @Field({ defaultValue: 'user' }) role: 'user' | 'dealer' | 'admin';
 
   @Field() created_at?: Date;
