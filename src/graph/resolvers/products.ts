@@ -62,7 +62,7 @@ export class ProductResolver {
     }
     const value = await User.query()
       .findById(payload!.userId)
-      .withGraphFetched('watches')
+      .withGraphFetched('watches.images')
       .modifyGraph('watches', (builder) => {
         builder.where('status', status).where('confirmed', confirmed);
       });
