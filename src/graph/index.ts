@@ -40,7 +40,7 @@ export const startServer = async (app: Application) => {
 
   server.applyMiddleware({ app });
 
-  app.listen(process.env.PORT || 80, () =>
+  app.listen(process.env.PORT || 4000, () =>
     Logger.info(
       `🚀 Server ready at http://localhost:${process.env.PORT}${server.graphqlPath}`,
     ),
