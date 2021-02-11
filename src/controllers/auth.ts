@@ -2,8 +2,9 @@ import { User } from 'models';
 import { hash } from 'bcrypt';
 import { verify } from 'jsonwebtoken';
 import { createAccessToken, createRefreshToken, Logger } from 'services';
+import { Request, Response } from 'express';
 
-export const refreshToken = async (req: any, res: any) => {
+export const refreshToken = async (req: Request, res: Response) => {
   const { refresh_token: token } = req.headers;
   Logger.info(['token', token]);
   if (!token) {
@@ -29,21 +30,41 @@ export const refreshToken = async (req: any, res: any) => {
   return res.send({ accessToken, refreshToken });
 };
 
-export const resetPassword = async (req: any, res: any) => {
+export const resetPassword = async (req: Request, res: Response) => {
   const { password, confirm } = req.body;
-  if (password !== confirm)
+  const { token } = req.params;
+
+  if (!token) {
     return res.send({
-      message: 'Passwords do not match!',
+      message: 'Bad request!',
+    });
+  }
+  try {
+    const payload = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+
+    if (password === undefined || confirm === undefined)
+      return res.send({
+        message: 'Password and confirm password are required',
+      });
+
+    if (password !== confirm)
+      return res.send({
+        message: 'Passwords do not match!',
+      });
+
+    const hashedPassword = await hash(password, 10);
+    // @ts-ignore
+    await User.query().findById(payload.userId).patch({
+      password: hashedPassword,
     });
 
-  try {
-    const hashedPassword = await hash(password, 10);
-    await User.query().findById(1).patch({
-      password: hashedPassword,
+    return res.send({
+      message: 'sucesss',
     });
   } catch (e) {
     Logger.error(e.message);
+    return res.send({
+      message: 'Bad request!',
+    });
   }
-
-  return res.sendFile(__dirname + '/reset.html');
 };

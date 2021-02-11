@@ -41,19 +41,22 @@ export class UserResolver {
     last_name: string,
     @Arg('first_name', { defaultValue: undefined, nullable: true })
     first_name: string,
+    @Arg('fcm_token', { defaultValue: undefined, nullable: true })
+    fcm_token: string,
     @Ctx() { payload }: Context,
   ) {
     const user = await User.query()
       .findById(payload!.userId)
       .patch({
+        role,
         phone,
         birth,
         gender,
         address,
+        blocked,
+        fcm_token,
         last_name,
         first_name,
-        blocked,
-        role,
       })
       .returning('*');
 

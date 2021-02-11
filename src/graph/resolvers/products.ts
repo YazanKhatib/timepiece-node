@@ -62,7 +62,7 @@ export class ProductResolver {
     }
     const value = await User.query()
       .findById(payload!.userId)
-      .withGraphFetched('watches')
+      .withGraphFetched('watches.images')
       .modifyGraph('watches', (builder) => {
         builder.where('status', status).where('confirmed', confirmed);
       });
@@ -73,7 +73,7 @@ export class ProductResolver {
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
   async searchProducts(@Arg('brand') brand: string) {
-    const products = await Watch.query();
+    const products = await Watch.query().withGraphFetched('images');
     const result = products.filter((p) => {
       if (p.name.search(brand.toLowerCase()) !== -1) return p;
     });
@@ -257,6 +257,7 @@ export class ProductResolver {
   ) {
     const watches = Watch.query()
       .skipUndefined()
+      .withGraphFetched('images')
       .where('name', brand)
       .where('gender', gender)
       .where('movement', movement)
