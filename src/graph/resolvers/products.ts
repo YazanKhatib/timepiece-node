@@ -97,6 +97,7 @@ export class ProductResolver {
     @Arg('production_year', { nullable: true }) production_year: number,
     @Arg('gender', { nullable: true }) gender: string,
     @Arg('featured', { nullable: true }) featured: boolean,
+    @Arg('certified', { nullable: true }) certified: boolean,
 
     // Calibar Optional
     @Arg('calibar', { nullable: true }) calibar: string,
@@ -139,6 +140,7 @@ export class ProductResolver {
         gender,
         location,
         featured,
+        certified: user.role === 'admin' ? true : false,
         calibar,
         base_calibar,
         power_reserve,
