@@ -8,7 +8,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string('gender');
       table.string('phone', 255);
       table.string('token', 255);
-      table.string('address');
+      table.string('address', 1000);
       table.string('last_name', 255);
       table.string('first_name', 255);
       table.string('password', 255).notNullable();
