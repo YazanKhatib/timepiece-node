@@ -22,7 +22,9 @@ export class FavoriteResolver {
       throw new Error('Could not find user!');
     }
 
-    const favorites = await user.$relatedQuery('favorites');
+    const favorites = await user
+      .$relatedQuery('favorites')
+      .withGraphFetched('images');
     return favorites;
   }
 
