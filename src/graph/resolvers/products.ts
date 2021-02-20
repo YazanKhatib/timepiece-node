@@ -25,10 +25,12 @@ export class ProductResolver {
     const products = featured
       ? await Watch.query()
           .where('featured', true)
+          .where('confirmed', true)
           .page(offset, limit)
           .orderBy('id')
           .withGraphFetched('images')
       : await Watch.query()
+          .where('confirmed', true)
           .page(offset, limit)
           .orderBy('id')
           .withGraphFetched('images');
