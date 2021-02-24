@@ -242,6 +242,7 @@ export class ProductResolver {
         clasp,
         clasp_material,
       })
+      .withGraphFetched('images')
       .returning('*');
 
     return product;
