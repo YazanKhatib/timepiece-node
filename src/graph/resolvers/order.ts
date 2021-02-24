@@ -32,10 +32,11 @@ export class OrderResolver {
     try {
       const orders = await User.query()
         .findById(payload!.userId)
-        .withGraphFetched('orders')
+        .withGraphFetched('orders.images')
         .modifyGraph('orders', (builder) => {
           builder.where('status', status);
         });
+
       //@ts-ignore
       return orders.orders;
     } catch (e) {
