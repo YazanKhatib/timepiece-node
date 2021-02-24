@@ -75,7 +75,9 @@ export class ProductResolver {
   @Query(() => [Watch])
   @UseMiddleware(isAuth)
   async searchProducts(@Arg('brand') brand: string) {
-    const products = await Watch.query().withGraphFetched('images');
+    const products = await Watch.query()
+      .where('confirmed', true)
+      .withGraphFetched('images');
     const result = products.filter((p) => {
       if (p.name.search(brand.toLowerCase()) !== -1) return p;
     });
@@ -262,6 +264,7 @@ export class ProductResolver {
     const watches = Watch.query()
       .skipUndefined()
       .withGraphFetched('images')
+      .where('confirmed', true)
       .where('name', brand)
       .where('gender', gender)
       .where('movement', movement)

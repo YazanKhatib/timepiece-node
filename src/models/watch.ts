@@ -15,7 +15,7 @@ export class Watch extends Model {
   @Field() location: string;
   @Field() featured: boolean;
   @Field() condition: string;
-  @Field() confirmed: boolean;
+  @Field({ nullable: true }) confirmed: boolean;
   @Field() certified: boolean;
   @Field() description: string;
   @Field() proposed_price: number;

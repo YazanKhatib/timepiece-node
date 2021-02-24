@@ -21,7 +21,9 @@ export class BrandResolver {
   @UseMiddleware(isAuth)
   async getBrandProducts(@Arg('brand') brand: string) {
     const products = await (
-      await Brand.query().findOne('name', brand.toLowerCase())
+      await Brand.query()
+        .findOne('name', brand.toLowerCase())
+        .where('confirmed', true)
     ).$relatedQuery('products');
 
     return products;
