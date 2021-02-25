@@ -18,22 +18,18 @@ export class ProductResolver {
   @Query(() => WatchResponse)
   @UseMiddleware(isAuth)
   async getProducts(
-    @Arg('featured') featured: boolean,
+    @Arg('featured', { nullable: true }) featured: boolean,
     @Arg('offset', { defaultValue: 0 }) offset: number,
     @Arg('limit', { defaultValue: 10 }) limit: number,
   ) {
-    const products = featured
-      ? await Watch.query()
-          .where('featured', true)
-          .where('confirmed', true)
-          .page(offset, limit)
-          .orderBy('id')
-          .withGraphFetched('images')
-      : await Watch.query()
-          .where('confirmed', true)
-          .page(offset, limit)
-          .orderBy('id')
-          .withGraphFetched('images');
+    const products = await Watch.query()
+      .skipUndefined()
+      .where('confirmed', true)
+      .where('featured', featured)
+      .orderBy('id')
+      .page(offset, limit)
+      .withGraphFetched('images');
+
     return products;
   }
 
