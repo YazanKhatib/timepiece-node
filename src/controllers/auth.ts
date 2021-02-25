@@ -1,11 +1,11 @@
 import { User } from 'models';
 import { hash } from 'bcrypt';
 import { verify } from 'jsonwebtoken';
-import { createAccessToken, createRefreshToken, Logger } from 'services';
+import { createAccessToken, Logger } from 'services';
 import { Request, Response } from 'express';
 
-export const refreshToken = async (req: Request, res: Response) => {
-  const { refresh_token: token } = req.headers;
+export const verifyToken = async (req: Request, res: Response) => {
+  const token = req.header('refreshToken');
   Logger.info(['token', token]);
   if (!token) {
     return res.send({ message: 'Invalid refresh token' });
@@ -26,8 +26,7 @@ export const refreshToken = async (req: Request, res: Response) => {
   }
 
   const accessToken = createAccessToken(user);
-  const refreshToken = createRefreshToken(user);
-  return res.send({ accessToken, refreshToken });
+  return res.send({ accessToken });
 };
 
 export const resetPassword = async (req: Request, res: Response) => {
