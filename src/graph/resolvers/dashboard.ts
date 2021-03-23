@@ -3,7 +3,7 @@ import { compare } from 'bcrypt';
 import { LoginResponse, UserResponse } from '../types';
 
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
-import { createAccessToken, createRefreshToken } from 'services';
+import { createAccessToken, createRefreshToken, notify } from 'services';
 
 @Resolver()
 export class DashboardResolver {
@@ -89,5 +89,12 @@ export class DashboardResolver {
       accessToken: createAccessToken(admin),
       refreshToken: createRefreshToken(admin),
     };
+  }
+
+  @Mutation(() => Boolean)
+  async sendNotification(@Arg('token') token: string) {
+    const result = await notify(token);
+    console.log(result);
+    return true;
   }
 }

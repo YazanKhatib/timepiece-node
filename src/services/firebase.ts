@@ -8,11 +8,10 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const registrationToken = '';
-
 const payload = {
   data: {
-    myKey: '',
+    title: 'sup Noor!',
+    body: 'Testing notifications!!',
   },
 };
 
@@ -21,12 +20,14 @@ const options = {
   TimeToLive: 60 * 60 * 24,
 };
 
-admin
-  .messaging()
-  .sendToDevice(registrationToken, payload, options)
-  .then((response) => {
-    console.log('Successfully send message', response);
-  })
-  .catch((error) => {
-    console.log('Error sending messages', error);
-  });
+export const notify = (registrationToken: string) => {
+  admin
+    .messaging()
+    .sendToDevice(registrationToken, payload, options)
+    .then((response) => {
+      console.log('Successfully send message', response);
+    })
+    .catch((error) => {
+      console.log('Error sending messages', error);
+    });
+};
