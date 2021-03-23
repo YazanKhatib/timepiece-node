@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import { Application } from 'express';
-import { Logger } from 'services';
+import { Logger, initializeFirebase } from 'services';
 import { buildSchema } from 'type-graphql';
 import { initializeDB } from '../database';
 import {
@@ -35,7 +35,7 @@ export const startServer = async (app: Application) => {
   });
 
   initializeDB();
-
+  initializeFirebase();
   server.applyMiddleware({ app });
 
   app.listen(process.env.PORT || 4000, () =>

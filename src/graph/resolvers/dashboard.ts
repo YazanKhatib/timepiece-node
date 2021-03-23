@@ -3,7 +3,12 @@ import { compare } from 'bcrypt';
 import { LoginResponse, UserResponse } from '../types';
 
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
-import { createAccessToken, createRefreshToken, notify } from 'services';
+import {
+  createAccessToken,
+  createRefreshToken,
+  Logger,
+  notify,
+} from 'services';
 
 @Resolver()
 export class DashboardResolver {
@@ -92,9 +97,46 @@ export class DashboardResolver {
   }
 
   @Mutation(() => Boolean)
-  async sendNotification(@Arg('token') token: string) {
-    const result = await notify(token);
+  async sendNotification(
+    @Arg('token') token: string,
+    @Arg('title', { defaultValue: null }) title: string,
+    @Arg('body', { defaultValue: null }) body: string,
+  ) {
+    if (!title || !body) throw new Error('Title and Body are required!');
+    const payload = {
+      data: {
+        title,
+        body,
+      },
+    };
+    const result = await notify(token, payload);
     console.log(result);
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async broadcastNotification(
+    @Arg('title', { nullable: false }) title: string,
+    @Arg('body', { nullable: false }) body: string,
+  ) {
+    try {
+      const payload = {
+        data: {
+          title,
+          body,
+        },
+      };
+      const users = await User.query().whereNot('fcm_token', null);
+      await Promise.all(
+        users.map(async (user) => {
+          await notify(user.fcm_token, payload);
+        }),
+      );
+
+      return true;
+    } catch (e) {
+      Logger.error(e.message);
+      return false;
+    }
   }
 }
