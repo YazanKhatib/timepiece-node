@@ -35,7 +35,6 @@ export const startServer = async (app: Application) => {
   });
 
   initializeDB();
-  initializeFirebase();
   server.applyMiddleware({ app });
 
   app.listen(process.env.PORT || 4000, () =>
