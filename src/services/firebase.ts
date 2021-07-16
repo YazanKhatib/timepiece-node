@@ -8,19 +8,23 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const payload = {
-  data: {
-    title: 'sup Noor!',
-    body: 'Testing notifications!!',
-  },
-};
-
 const options = {
   priority: 'High',
   TimeToLive: 60 * 60 * 24,
 };
 
-export const notify = (registrationToken: string) => {
+export const notify = (
+  registrationToken: string,
+  title: string,
+  body: string,
+) => {
+  const payload = {
+    data: {
+      title,
+      body,
+    },
+  };
+
   admin
     .messaging()
     .sendToDevice(registrationToken, payload, options)

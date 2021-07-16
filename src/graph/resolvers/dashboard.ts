@@ -92,9 +92,17 @@ export class DashboardResolver {
   }
 
   @Mutation(() => Boolean)
-  async sendNotification(@Arg('token') token: string) {
-    const result = await notify(token);
-    console.log(result);
+  async sendNotification(
+    @Arg('title') title: string,
+    @Arg('body') body: string,
+  ) {
+    const users = await User.query().whereNot('fcm_token', null);
+    await Promise.all(
+      users.map(async (user: any) => {
+        await notify(user.fcm_token, title, body);
+      }),
+    );
+
     return true;
   }
 }
