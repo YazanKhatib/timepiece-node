@@ -3,7 +3,13 @@ import { compare } from 'bcrypt';
 import { LoginResponse, UserResponse } from '../types';
 
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
-import { createAccessToken, createRefreshToken, notify } from 'services';
+import {
+  createAccessToken,
+  createRefreshToken,
+  Logger,
+  notify,
+} from 'services';
+import { loggers } from 'winston';
 
 @Resolver()
 export class DashboardResolver {
@@ -96,13 +102,18 @@ export class DashboardResolver {
     @Arg('title') title: string,
     @Arg('body') body: string,
   ) {
-    const users = await User.query().whereNot('fcm_token', null);
-    await Promise.all(
-      users.map(async (user: any) => {
-        await notify(user.fcm_token, title, body);
-      }),
-    );
+    try {
+      const users = await User.query().whereNot('fcm_token', null);
+      await Promise.all(
+        users.map(async (user: any) => {
+          await notify(user.fcm_token, title, body);
+        }),
+      );
 
-    return true;
+      return true;
+    } catch (e) {
+      Logger.error(e.message);
+      return false;
+    }
   }
 }

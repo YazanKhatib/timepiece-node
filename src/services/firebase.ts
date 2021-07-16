@@ -1,5 +1,4 @@
 import * as admin from 'firebase-admin';
-
 import firebaseConfig from '../firebaseSdk';
 
 const serviceAccount = firebaseConfig as admin.ServiceAccount;
@@ -11,6 +10,12 @@ admin.initializeApp({
 const options = {
   priority: 'High',
   TimeToLive: 60 * 60 * 24,
+};
+
+export const initializeFirebase = async () => {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
 };
 
 export const notify = (
