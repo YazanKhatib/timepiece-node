@@ -64,7 +64,7 @@ export class AuthResolver {
 
     const valid = await compare(password, user.password);
     if (!valid) {
-      throw new Error('Bad password!');
+      throw new Error('Wrong password!');
     }
 
     return {

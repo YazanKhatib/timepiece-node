@@ -21,9 +21,7 @@ export class BrandResolver {
   @UseMiddleware(isAuth)
   async getBrandProducts(@Arg('brand') brand: string) {
     const products = await (
-      await Brand.query()
-        .findOne('name', brand.toLowerCase())
-        .where('confirmed', true)
+      await Brand.query().findOne('name', brand).where('confirmed', true)
     ).$relatedQuery('products');
 
     return products;
@@ -34,7 +32,7 @@ export class BrandResolver {
   async createBrand(@Arg('name') name: string) {
     try {
       const brand = await Brand.query().insert({
-        name: name.toLowerCase(),
+        name,
       });
       return brand;
     } catch (e) {
@@ -50,7 +48,7 @@ export class BrandResolver {
       const brand = await Brand.query()
         .findById(id)
         .patch({
-          name: name.toLowerCase(),
+          name,
         })
         .returning('*');
       return brand;

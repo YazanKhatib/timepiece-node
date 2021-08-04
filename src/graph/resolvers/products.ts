@@ -123,7 +123,7 @@ export class ProductResolver {
     if (user.role === 'user') {
       throw new Error('User do not have post permisson!');
     }
-    const brandRec = await Brand.query().findOne({ name: brand.toLowerCase() });
+    const brandRec = await Brand.query().findOne({ name: brand });
     let product;
     await Model.transaction(async (tr) => {
       product = await Watch.query().insert({

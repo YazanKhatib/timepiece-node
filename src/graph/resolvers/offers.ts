@@ -1,6 +1,6 @@
 import { isAuth } from 'middlewares';
 import { User, Watch } from 'models';
-import { Logger } from 'services';
+import { Logger, notify } from 'services';
 import {
   Ctx,
   Arg,
@@ -49,6 +49,7 @@ export class OfferResolver {
     @Arg('approved') approved: boolean,
   ) {
     try {
+      const user = await User.query().findById(id);
       await User.relatedQuery('offers')
         .for(id)
         // @ts-ignore
@@ -58,6 +59,17 @@ export class OfferResolver {
       if (approved) {
         await User.relatedQuery('orders').for(id).relate(watchId);
         await Watch.query().findById(watchId).patch({ status: 'sold' });
+        await notify(
+          user.fcm_token,
+          'Approved offer',
+          'Your offer has been approved!',
+        );
+      } else {
+        await notify(
+          user.fcm_token,
+          'Declined offer',
+          'Your offer has been declined!',
+        );
       }
       return true;
     } catch (e) {

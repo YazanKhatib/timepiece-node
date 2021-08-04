@@ -9,7 +9,6 @@ import {
   Logger,
   notify,
 } from 'services';
-import { loggers } from 'winston';
 
 @Resolver()
 export class DashboardResolver {
@@ -87,7 +86,7 @@ export class DashboardResolver {
 
     const valid = await compare(password, admin.password);
     if (!valid) {
-      throw new Error('Bad password!');
+      throw new Error('Wrong password!');
     }
 
     return {
