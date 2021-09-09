@@ -43,7 +43,7 @@ export class AuthResolver {
       throw new Error(e.message);
     }
 
-    const otp = this.sendEmail(email);
+    const otp = await this.sendEmail(email);
     return otp;
   }
 
