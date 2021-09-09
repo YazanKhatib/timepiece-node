@@ -18,6 +18,7 @@ export class AuthResolver {
   @Mutation(() => Number)
   async register(
     @Arg('email') email: string,
+    @Arg('business_email', { nullable: true }) business_email: string,
     @Arg('username') username: string,
     @Arg('password') password: string,
     @Arg('phone', { nullable: true }) phone: string,
