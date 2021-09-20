@@ -50,6 +50,8 @@ export class DashboardResolver {
     address: string,
     @Arg('role', { defaultValue: undefined, nullable: true })
     role: 'user' | 'dealer' | 'admin',
+    @Arg('confirmed', { defaultValue: undefined, nullable: true })
+    confirmed: boolean,
     @Arg('blocked', { defaultValue: undefined, nullable: true })
     blocked: boolean,
     @Arg('last_name', { defaultValue: undefined, nullable: true })
@@ -66,6 +68,7 @@ export class DashboardResolver {
         address,
         last_name,
         first_name,
+        confirmed,
         blocked,
         role,
       })

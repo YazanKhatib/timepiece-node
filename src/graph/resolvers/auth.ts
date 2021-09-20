@@ -37,7 +37,7 @@ export class AuthResolver {
         address,
         role,
       });
-    } catch (e) {
+    } catch (e: any) {
       if (e instanceof UniqueViolationError)
         throw new Error('User already exist!');
       Logger.error(e.message);
