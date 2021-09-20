@@ -59,7 +59,7 @@ export class AuthResolver {
       throw new Error('Could not find user!');
     }
 
-    if (!user.confirmed || user.blocked) {
+    if (user.blocked) {
       throw new Error('User account is not confirmed!');
     }
 
